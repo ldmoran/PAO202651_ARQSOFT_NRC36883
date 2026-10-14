@@ -18,3 +18,7 @@ Credenciales de práctica: usuario `monster`, clave `monster9`.
 Cada proyecto trae sus carpetas: `01. UML` (ERS, ECUD y diagramas), `02. MER` y `03. BDD` (aclaración: no hay base de datos), `04.` (servidor y clientes) y `05. DOCUMENTACION` (diccionario de datos, manual técnico, manual de usuario y presentación).
 
 Cómo compilar y ejecutar cada parte está en el `README.md` de su carpeta (servidor y clientes).
+
+## Parcial 2 y Parcial 3 (`P2/` y `P3/`)
+
+Carpetas reservadas; todavía no tienen contenido.
