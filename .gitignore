@@ -1,0 +1,26 @@
+# Solo se sube lo del Parcial 1: TI.1.1 a TI.1.4
+/Instaladores/
+/P2/
+/P3/
+/P1/documentos/
+/P1/guia_para_proyectos/
+
+# Compilación y archivos del IDE
+bin/
+obj/
+target/
+build/
+.gradle/
+.idea/
+.vs/
+.vscode/
+TestResults/
+*.user
+*.apk
+local.properties
+
+# Temporales de Office y comprimidos
+~$*
+*.tmp
+*.rar
+*.zip

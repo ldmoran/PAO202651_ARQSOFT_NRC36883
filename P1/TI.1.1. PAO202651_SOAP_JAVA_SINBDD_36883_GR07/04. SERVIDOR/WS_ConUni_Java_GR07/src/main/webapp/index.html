@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Conversión de Unidades Monster - Servicios SOAP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1f2937; }
+        h1 { color: #1f3864; }
+        table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+        th, td { border: 1px solid #c7d2e5; padding: .5rem .7rem; text-align: left; }
+        th { background: #4f81bd; color: #fff; }
+        code { background: #eef2f9; padding: 0 .3rem; }
+    </style>
+</head>
+<body>
+    <h1>Conversión de Unidades Monster</h1>
+    <p>Servicios web SOAP (Jakarta JAX-WS) del Grupo 07. Primero se llama a <code>login</code> para obtener un token;
+       ese token se envía en el catálogo y en cada conversión.</p>
+    <table>
+        <tr><th>Servicio</th><th>Operación</th><th>WSDL</th></tr>
+        <tr><td>WSLogin</td><td>login(usuario, clave)</td><td><a href="WSLogin?wsdl">WSLogin?wsdl</a></td></tr>
+        <tr><td>WSCatalogo</td><td>obtenerCategorias(token)<br>obtenerUnidades(token, categoria)</td><td><a href="WSCatalogo?wsdl">WSCatalogo?wsdl</a></td></tr>
+        <tr><td>WSLongitud</td><td>convertirLongitud(valor, unidadOrigen, unidadDestino, token)</td><td><a href="WSLongitud?wsdl">WSLongitud?wsdl</a></td></tr>
+        <tr><td>WSMasa</td><td>convertirMasa(valor, unidadOrigen, unidadDestino, token)</td><td><a href="WSMasa?wsdl">WSMasa?wsdl</a></td></tr>
+        <tr><td>WSTemperatura</td><td>convertirTemperatura(valor, unidadOrigen, unidadDestino, token)</td><td><a href="WSTemperatura?wsdl">WSTemperatura?wsdl</a></td></tr>
+    </table>
+    <p>Todas las operaciones devuelven <code>estado</code>, <code>codigo</code>, <code>mensaje</code>, <code>resultado</code>,
+       <code>unidadOrigen</code> y <code>unidadDestino</code> (más <code>token</code> en el login y <code>datos</code> en el catálogo).</p>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<resources>
+    <color name="azul">#1F3864</color>
+    <color name="azul_claro">#4F81BD</color>
+    <color name="azul_medio">#2D5090</color>
+    <color name="celeste">#DBE8F8</color>
+    <color name="fondo">#EEF3FA</color>
+    <color name="error">#B00020</color>
+    <color name="exito">#1B7F3B</color>
+    <color name="blanco">#FFFFFF</color>
+    <color name="borde">#9FB2D3</color>
+</resources>
