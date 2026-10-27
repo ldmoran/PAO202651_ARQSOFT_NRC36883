@@ -67,9 +67,3 @@ Unidades (en minúsculas y sin tildes; el servidor también acepta mayúsculas y
 - `Modelos/Utilidades/Enums`: `CodigoResultado` (OK-200, AUTH-001, ...) y `EstadoRespuesta`.
 - `Modelos/Utilidades/Mapeadores`: `RespuestaMapeador`, el único lugar donde se arma la respuesta.
 - `WS_ConUni_DotNet_GR07.Pruebas`: pruebas xUnit (lógica, tokens y SOAP de extremo a extremo).
-
-## Agregar divisas más adelante (pendiente de confirmar con el tutor)
-1. Crear `ConversorDivisas : IConversor` en `Servicios` (categoría "Divisas", sus unidades y el cálculo).
-2. Registrarlo en `CatalogoUnidades` (una línea).
-3. Crear el servicio `WSDivisas` en `Controladores/WS` copiando `WSMasa`, y registrarlo en `Program.cs`.
-El catálogo, el token, la validación y los códigos de error funcionan igual.

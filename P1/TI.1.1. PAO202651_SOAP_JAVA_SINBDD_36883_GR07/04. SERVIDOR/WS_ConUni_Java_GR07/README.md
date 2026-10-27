@@ -66,10 +66,3 @@ Unidades (en minúsculas y sin tildes; el servidor también acepta mayúsculas y
 
 El espacio de nombres SOAP está fijado en cada servicio (`http://WebServices.monster.edu.ec/`), así
 que el contrato (WSDL) y los cuatro clientes no dependen del nombre de los paquetes.
-
-## Agregar divisas más adelante (pendiente de confirmar con el tutor)
-La lógica ya está separada para sumar una categoría sin tocar lo demás:
-1. Crear `ConversorDivisas implements Conversor` en `servicios` (categoría "Divisas", sus unidades y el cálculo).
-2. Registrarlo en `CatalogoUnidades` (una línea).
-3. Crear el servicio `WSDivisas` en `controladores.ws` copiando `WSMasa` y cambiando la categoría.
-El catálogo, el token, la validación y los códigos de error funcionan igual.

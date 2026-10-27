@@ -1,0 +1,24 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #f3f5f9; color: #1c2430; }
+header { background: #123a6b; color: #fff; padding: 14px 24px; }
+header h1 { margin: 0 0 8px; font-size: 22px; }
+header h1 span { font-weight: 400; font-size: 14px; opacity: .8; margin-left: 8px; }
+nav a { color: #cfe0f7; text-decoration: none; margin-right: 18px; padding: 4px 0; }
+nav a.activo, nav a:hover { color: #fff; border-bottom: 2px solid #fff; }
+main { max-width: 980px; margin: 24px auto; padding: 0 16px; }
+h2 { margin-top: 0; }
+table { width: 100%; border-collapse: collapse; background: #fff; margin: 12px 0; }
+th { background: #123a6b; color: #fff; text-align: left; }
+th, td { padding: 8px 10px; border-bottom: 1px solid #dde3ee; }
+td.der { text-align: right; }
+input, select, button { font: inherit; padding: 6px 8px; }
+input, select { border: 1px solid #b9c4d6; border-radius: 4px; }
+button { background: #1f6fd1; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+button.peligro { background: #c0392b; }
+form.fila { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }
+form.columna { display: flex; flex-direction: column; gap: 12px; max-width: 440px; }
+form.columna label { display: flex; flex-direction: column; gap: 4px; }
+.ok { background: #e3f4e6; border-left: 4px solid #2e8b57; padding: 10px 14px; }
+.error { background: #fdeaea; border-left: 4px solid #c0392b; padding: 10px 14px; }
+.factura { background: #fff; border: 1px solid #dde3ee; border-radius: 6px; padding: 4px 18px; margin: 12px 0; }
+@media (max-width: 640px) { table { font-size: 13px; } th, td { padding: 6px; } }

@@ -2,7 +2,7 @@ namespace ec.edu.monster.Servicios
 {
     /// <summary>
     /// Catalogo en memoria de categorias y unidades (CU-02 y CU-03). Para agregar
-    /// una categoria nueva (por ejemplo divisas) basta con implementar
+    /// una categoria nueva (por ejemplo volumen) basta con implementar
     /// <see cref="IConversor"/> y registrarla aqui; el login, la validacion y la
     /// respuesta estructurada no cambian.
     /// </summary>

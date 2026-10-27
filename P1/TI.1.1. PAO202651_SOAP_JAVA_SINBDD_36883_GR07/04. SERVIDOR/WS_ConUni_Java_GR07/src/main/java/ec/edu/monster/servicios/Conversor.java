@@ -6,7 +6,7 @@ import java.util.Locale;
 
 /**
  * Contrato de un conversor de unidades. Cada categoria (longitud, masa,
- * temperatura, y en el futuro divisas) implementa esta interfaz y se registra
+ * temperatura, y en el futuro otras categorias) implementa esta interfaz y se registra
  * en {@link CatalogoUnidades}; el resto del sistema no cambia.
  */
 public interface Conversor {

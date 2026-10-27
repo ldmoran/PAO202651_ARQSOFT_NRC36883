@@ -5,7 +5,7 @@ namespace ec.edu.monster.Servicios
 {
     /// <summary>
     /// Contrato de un conversor de unidades. Cada categoria (longitud, masa,
-    /// temperatura, y en el futuro divisas) implementa esta interfaz y se registra
+    /// temperatura, y en el futuro otras categorias) implementa esta interfaz y se registra
     /// en <see cref="CatalogoUnidades"/>; el resto del sistema no cambia.
     /// </summary>
     public interface IConversor

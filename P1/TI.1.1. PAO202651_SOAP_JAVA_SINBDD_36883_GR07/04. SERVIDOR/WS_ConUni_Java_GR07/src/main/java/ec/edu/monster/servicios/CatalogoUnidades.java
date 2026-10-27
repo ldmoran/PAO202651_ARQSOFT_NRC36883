@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Catalogo en memoria de categorias y unidades (CU-02 y CU-03). Para agregar una
- * categoria nueva (por ejemplo divisas) basta con implementar {@link Conversor}
+ * categoria nueva (por ejemplo volumen) basta con implementar {@link Conversor}
  * y registrarla aqui; el login, la validacion y la respuesta estructurada no
  * cambian.
  */
