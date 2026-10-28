@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Conversión Monster</string>
+    <string name="titulo">Conversión de Unidades Monster</string>
+    <string name="servidor">Servidor</string>
+    <string name="usuario">Usuario</string>
+    <string name="clave">Clave</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="categoria">Categoría</string>
+    <string name="de">De</string>
+    <string name="a">A</string>
+    <string name="valor">Valor</string>
+    <string name="intercambiar">Intercambiar</string>
+    <string name="convertir">Convertir</string>
+    <string name="resultado">Resultado</string>
+</resources>

@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+actor Usuario
+rectangle "Conversor de Unidades Monster - API REST" {
+  usecase "CU-01\nIniciar sesión" as Login
+  usecase "CU-02\nConsultar categorías" as Categorias
+  usecase "CU-03\nConsultar unidades" as Unidades
+  usecase "CU-04\nConvertir unidades" as Convertir
+  usecase "CU-05\nValidar token" as Token
+  usecase "CU-06\nValidar datos" as Datos
+  usecase "CU-07\nEntregar respuesta JSON" as Respuesta
+}
+Usuario --> Login
+Usuario --> Categorias
+Usuario --> Unidades
+Usuario --> Convertir
+Categorias .> Token : <<include>>
+Unidades .> Token : <<include>>
+Convertir .> Token : <<include>>
+Convertir .> Datos : <<include>>
+Login .> Respuesta : <<include>>
+Categorias .> Respuesta : <<include>>
+Unidades .> Respuesta : <<include>>
+Convertir .> Respuesta : <<include>>
+@enduml
