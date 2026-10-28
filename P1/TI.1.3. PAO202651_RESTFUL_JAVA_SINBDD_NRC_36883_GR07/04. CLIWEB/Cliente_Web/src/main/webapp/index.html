@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conversión de Unidades Monster - Iniciar sesión</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <main class="login-page">
+
+        <!-- Fondo con 4 imágenes (solo pantallas anchas): Imagenes/login/slide1.jpg ... slide4.jpg -->
+        <div class="login-background" aria-hidden="true">
+            <div class="login-slide"></div>
+            <div class="login-slide"></div>
+            <div class="login-slide"></div>
+            <div class="login-slide"></div>
+        </div>
+
+        <section class="login-panel">
+            <!-- En pantallas angostas el panel se vuelve una tarjeta con este banner -->
+            <img class="login-banner" src="Imagenes/monster.jpg" alt="Monster">
+
+            <div class="login-brand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13l-3-3M17 17H4l3 3"/></svg>
+                <span>Monster</span>
+            </div>
+
+            <div class="login-form">
+                <h1>Conversión de Unidades Monster</h1>
+                <p>Longitud · Masa · Temperatura. Ingrese sus credenciales para continuar.</p>
+                <form id="formLogin" novalidate>
+                    <label for="usuario" class="visually-hidden">Usuario</label>
+                    <div class="login-input">
+                        <span class="login-icono" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+                        </span>
+                        <input id="usuario" name="usuario" autocomplete="username" placeholder="Usuario" required autofocus>
+                    </div>
+                    <label for="clave" class="visually-hidden">Clave</label>
+                    <div class="login-input">
+                        <span class="login-icono" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>
+                        </span>
+                        <input id="clave" name="clave" type="password" autocomplete="current-password" placeholder="Clave" required>
+                    </div>
+                    <button id="btnIngresar" type="submit" class="login-btn">Iniciar sesión</button>
+                    <div id="estado" class="estado" role="status" aria-live="polite"></div>
+                </form>
+                <div class="login-help">Arquitectura de Software · ESPE · GR07</div>
+            </div>
+        </section>
+
+    </main>
+    <script src="js/comun.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

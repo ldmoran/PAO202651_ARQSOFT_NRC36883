@@ -1,0 +1,38 @@
+@startuml
+class RestApplication
+class LoginResource
+class CatalogoResource
+class ConversionResource
+class ManejadorLogin
+class ManejadorCatalogo
+class ManejadorConversion
+class ServicioAutenticacion
+class GestorTokens
+class CatalogoUnidades
+interface Conversor
+class ConversorLongitud
+class ConversorMasa
+class ConversorTemperatura
+class RespuestaServicio
+class RespuestaMapeador
+
+RestApplication ..> LoginResource : publica /api
+RestApplication ..> CatalogoResource
+RestApplication ..> ConversionResource
+LoginResource --> ManejadorLogin
+CatalogoResource --> ManejadorCatalogo
+ConversionResource --> ManejadorConversion
+ManejadorLogin --> ServicioAutenticacion
+ManejadorCatalogo --> GestorTokens
+ManejadorCatalogo --> CatalogoUnidades
+ManejadorConversion --> GestorTokens
+ManejadorConversion --> CatalogoUnidades
+CatalogoUnidades o-- Conversor
+Conversor <|.. ConversorLongitud
+Conversor <|.. ConversorMasa
+Conversor <|.. ConversorTemperatura
+ManejadorLogin ..> RespuestaServicio
+ManejadorCatalogo ..> RespuestaServicio
+ManejadorConversion ..> RespuestaServicio
+RespuestaMapeador ..> RespuestaServicio
+@enduml

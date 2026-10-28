@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cabecera"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/titulo"
+            android:textColor="@color/blanco"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnCerrar"
+            style="@style/Boton"
+            android:layout_width="wrap_content"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:text="@string/cerrar_sesion" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_tarjeta"
+            android:elevation="6dp"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                style="@style/Etiqueta"
+                android:text="@string/categoria" />
+
+            <Spinner
+                android:id="@+id/cmbCategoria"
+                style="@style/Campo" />
+
+            <TextView
+                style="@style/Etiqueta"
+                android:text="@string/de" />
+
+            <Spinner
+                android:id="@+id/cmbOrigen"
+                style="@style/Campo" />
+
+            <Button
+                android:id="@+id/btnIntercambiar"
+                style="@style/Boton"
+                android:layout_marginTop="10dp"
+                android:text="@string/intercambiar" />
+
+            <TextView
+                style="@style/Etiqueta"
+                android:text="@string/a" />
+
+            <Spinner
+                android:id="@+id/cmbDestino"
+                style="@style/Campo" />
+
+            <TextView
+                style="@style/Etiqueta"
+                android:text="@string/valor" />
+
+            <EditText
+                android:id="@+id/txtValor"
+                style="@style/Campo"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal|numberSigned" />
+
+            <Button
+                android:id="@+id/btnConvertir"
+                style="@style/Boton"
+                android:layout_marginTop="18dp"
+                android:text="@string/convertir" />
+
+            <TextView
+                android:id="@+id/lblResultado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_resultado"
+                android:gravity="center"
+                android:minHeight="60dp"
+                android:padding="10dp"
+                android:text="@string/resultado"
+                android:textColor="@color/azul"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:minHeight="24dp"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

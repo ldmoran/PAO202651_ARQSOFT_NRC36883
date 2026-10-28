@@ -1,0 +1,18 @@
+@startuml
+actor Usuario
+participant "Cliente REST" as Cliente
+participant "ConversionResource" as API
+participant "ManejadorConversion" as Manejador
+participant "GestorTokens" as Tokens
+participant "CatalogoUnidades / Conversor" as Conversor
+Usuario -> Cliente : elegir categoría, unidades y valor
+Cliente -> API : POST /api/conversiones/{categoria}\nAuthorization: Bearer token\nJSON
+API -> Manejador : convertir(...)
+Manejador -> Tokens : verificar(token)
+Tokens --> Manejador : válido
+Manejador -> Conversor : validar y convertir(...)
+Conversor --> Manejador : resultado
+Manejador --> API : RespuestaServicio
+API --> Cliente : HTTP 200 + JSON OK-200
+Cliente --> Usuario : mostrar resultado
+@enduml
