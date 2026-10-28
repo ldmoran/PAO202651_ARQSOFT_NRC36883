@@ -1,0 +1,128 @@
+:root {
+  --azul: #1f3864; --azul-medio: #2d5090; --azul-claro: #4f81bd; --celeste: #dbe8f8; --fondo: #eef3fa;
+  --error: #b00020; --exito: #1b7f3b; --texto: #1f2937; --borde: #c4d1e6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; font-family: "Segoe UI", system-ui, Arial, sans-serif; color: var(--texto);
+  background: radial-gradient(circle at 12% 8%, #dbe8f8 0, transparent 38%),
+              radial-gradient(circle at 90% 92%, #c7d9f2 0, transparent 40%), var(--fondo);
+}
+/* ---------- barra superior ---------- */
+.barra {
+  background: linear-gradient(90deg, var(--azul), var(--azul-medio)); color: #fff; display: flex; align-items: center;
+  justify-content: space-between; padding: .75rem 1.4rem; gap: 1rem; flex-wrap: wrap;
+  box-shadow: 0 3px 14px rgba(31, 56, 100, .35); position: sticky; top: 0; z-index: 5;
+}
+.barra h1 { font-size: 1.15rem; margin: 0; letter-spacing: .3px; display: flex; align-items: center; gap: .6rem; }
+.barra h1 svg { width: 26px; height: 26px; flex: none; }
+.barra button { background: rgba(255, 255, 255, .15); border: 1px solid rgba(255, 255, 255, .5); padding: .45rem 1rem; box-shadow: none; }
+.barra button:hover:not(:disabled) { background: rgba(255, 255, 255, .3); }
+/* ---------- tarjeta ---------- */
+.tarjeta { max-width: 480px; margin: 2rem auto; padding: 0 1rem; animation: entrar .45s ease both; }
+.tarjeta .caja {
+  background: #fff; border: 1px solid var(--borde); border-radius: 16px; padding: 1.5rem 1.6rem; overflow: hidden;
+  box-shadow: 0 14px 38px rgba(31, 56, 100, .16);
+}
+.banner { width: 100%; display: block; max-height: 210px; object-fit: cover; }
+.titulo { color: var(--azul); text-align: center; margin: 1rem 0 .3rem; font-size: 1.4rem; }
+.subtitulo { color: #5b6b86; text-align: center; margin: 0 0 .4rem; font-size: .92rem; }
+/* ---------- formulario ---------- */
+label { display: block; font-weight: 600; color: var(--azul); margin: 1rem 0 .3rem; font-size: .88rem; letter-spacing: .2px; }
+input, select {
+  width: 100%; padding: .7rem .8rem; border: 1.5px solid var(--borde); border-radius: 10px; font-size: 1rem; background: #f8fbff;
+  transition: border-color .15s, box-shadow .15s, background .15s; font-family: inherit;
+}
+input:hover:not(:disabled), select:hover:not(:disabled) { border-color: var(--azul-claro); }
+input:focus, select:focus { outline: none; border-color: var(--azul-claro); background: #fff; box-shadow: 0 0 0 4px rgba(79, 129, 189, .22); }
+input:disabled, select:disabled { background: #eef1f6; color: #8a96aa; }
+button {
+  background: linear-gradient(135deg, var(--azul-claro), var(--azul-medio)); color: #fff; border: 0; border-radius: 10px;
+  padding: .75rem 1.6rem; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 12px rgba(45, 80, 144, .32); transition: transform .12s, box-shadow .12s, filter .12s;
+}
+button:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); box-shadow: 0 7px 16px rgba(45, 80, 144, .38); }
+button:active:not(:disabled) { transform: translateY(0); }
+button:focus-visible { outline: 3px solid #9cc0ee; outline-offset: 2px; }
+button:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+button.secundario { background: #fff; color: var(--azul); border: 1.5px solid var(--azul-claro); box-shadow: none; padding: .5rem 1.1rem; }
+button.secundario:hover:not(:disabled) { background: var(--celeste); }
+.fila-botones { display: flex; justify-content: center; gap: .6rem; margin-top: 1.2rem; flex-wrap: wrap; }
+.fila-botones button[type=submit] { min-width: 60%; }
+/* ---------- resultado y estado ---------- */
+.resultado {
+  margin-top: 1.3rem; padding: 1.1rem; text-align: center; font-size: 1.35rem; font-weight: 700; color: var(--azul);
+  background: linear-gradient(135deg, #f4f8ff, var(--celeste)); border: 2px solid var(--azul-claro); border-radius: 14px;
+  min-height: 4rem; display: flex; align-items: center; justify-content: center; word-break: break-word;
+}
+.estado { min-height: 1.5rem; text-align: center; margin-top: .7rem; font-size: .92rem; }
+.estado.error { color: var(--error); font-weight: 600; }
+.estado.exito { color: var(--exito); font-weight: 600; }
+.estado.info { color: var(--azul); }
+.pie { text-align: center; color: #6b7a96; font-size: .8rem; margin: 1rem 0 2rem; }
+@keyframes entrar { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@media (max-width: 520px) { .tarjeta { margin: 1rem auto; } .tarjeta .caja { padding: 1.2rem 1.1rem; } .barra h1 { font-size: 1rem; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- servidor (opcional) ---------- */
+details.servidor { margin-top: 1rem; font-size: .85rem; color: #5b6b86; }
+details.servidor summary { cursor: pointer; }
+details.servidor input { margin-top: .4rem; }
+
+/* ================= Login ================= */
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; }
+
+/* Por defecto (móvil y escritorio): tarjeta centrada, con el banner de Monster */
+.login-page { min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 1rem; }
+.login-background, .login-brand { display: none; }
+.login-panel { width: 100%; max-width: 480px; margin-top: 1rem; padding: 0 0 1.4rem; border-radius: 16px; overflow: hidden;
+  background: #fff; border: 1px solid var(--borde); box-shadow: 0 14px 38px rgba(31, 56, 100, .16); animation: entrar .45s ease both; }
+.login-banner { display: block; width: 100%; max-height: 210px; object-fit: cover; }
+.login-form { width: 100%; padding: .4rem 1.6rem 0; }
+.login-form h1 { margin: 1rem 0 12px; color: var(--azul); font-size: 1.4rem; font-weight: 700; text-align: center; }
+.login-form p { margin: 0 0 22px; color: #5b6b86; font-size: .92rem; text-align: center; }
+.login-input { display: flex; align-items: stretch; margin-bottom: 16px; }
+.login-icono { width: 40px; display: flex; align-items: center; justify-content: center; color: var(--azul); background: rgba(247, 249, 251, .9); border: 1.5px solid var(--borde); border-right: 0; border-radius: 10px 0 0 10px; }
+.login-icono svg { width: 18px; height: 18px; }
+.login-input input { flex: 1; min-width: 0; height: 42px; border-radius: 0 10px 10px 0; border: 1.5px solid var(--borde); background: #f8fbff; padding: 0 .8rem; font-size: .95rem; }
+.login-btn { display: block; width: 60%; margin: 22px auto 12px; }
+.login-help { margin-top: 1rem; color: #6b7a96; font-size: .8rem; text-align: center; }
+.login-form .estado { min-height: 1.4rem; }
+
+/* Solo web (el cliente web agrega la clase "con-fondo" al body y define las imágenes en su propio CSS):
+   fondo con 4 imágenes rotando y panel curvo a la izquierda */
+@media (min-width: 769px) {
+  body.con-fondo .login-page { display: block; position: relative; overflow: hidden; padding: 0; background: var(--azul); }
+  body.con-fondo .login-background { display: block; position: absolute; inset: 0; z-index: 0; }
+  body.con-fondo .login-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; animation: login-fade 24s infinite; }
+  body.con-fondo .login-slide:nth-child(1) { animation-delay: 0s; }
+  body.con-fondo .login-slide:nth-child(2) { animation-delay: 6s; }
+  body.con-fondo .login-slide:nth-child(3) { animation-delay: 12s; }
+  body.con-fondo .login-slide:nth-child(4) { animation-delay: 18s; }
+  body.con-fondo .login-page::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(31, 56, 100, .10); pointer-events: none; }
+  body.con-fondo .login-panel { position: relative; z-index: 2; min-height: 100vh; width: min(34vw, 560px); min-width: 460px; max-width: none; margin: 0;
+    display: flex; flex-direction: column; justify-content: center; padding: 54px 72px 54px 34px; overflow: visible;
+    background: rgba(248, 250, 253, .94); border: 0; border-radius: 0 22% 22% 0 / 0 100% 100% 0; box-shadow: 20px 0 48px rgba(15, 23, 42, .16); }
+  body.con-fondo .login-banner { display: none; }
+  body.con-fondo .login-brand { position: absolute; top: 70px; left: 46px; right: 110px; display: flex; align-items: center; justify-content: center; gap: .6rem; color: var(--azul); font-size: 1.9rem; font-weight: 700; letter-spacing: .4px; }
+  body.con-fondo .login-brand svg { width: 38px; height: 38px; }
+  body.con-fondo .login-form { width: min(420px, 76%); margin-top: 150px; padding: 0; }
+  body.con-fondo .login-form h1 { text-align: left; margin-top: 0; font-size: 1.45rem; }
+  body.con-fondo .login-form p { text-align: left; margin-bottom: 26px; }
+  body.con-fondo .login-icono { width: 38px; }
+  body.con-fondo .login-input input { height: 40px; background: rgba(247, 249, 251, .8); }
+  body.con-fondo .login-btn { width: 160px; margin-top: 26px; }
+}
+@media (min-width: 769px) and (max-width: 992px) {
+  body.con-fondo .login-panel { width: min(76vw, 620px); min-width: 0; padding-right: 64px; }
+  body.con-fondo .login-form { width: min(400px, 82%); }
+}
+@keyframes login-fade { 0% { opacity: 0; } 4% { opacity: 1; } 25% { opacity: 1; } 29% { opacity: 0; } 100% { opacity: 0; } }
+
+/* El router de Blazor enfoca el h1 al navegar; no se debe ver un recuadro negro */
+h1:focus, h1:focus-visible { outline: none; }
+
+/* Accesibilidad: con "reducir movimiento" no rota el fondo; se queda fija la primera imagen */
+@media (prefers-reduced-motion: reduce) {
+  body.con-fondo .login-slide:nth-child(1) { opacity: 1; }
+}
