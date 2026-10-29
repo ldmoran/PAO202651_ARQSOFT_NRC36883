@@ -12,7 +12,7 @@ mvn clean test
 mvn compile
 ```
 
-Ejecuta `ec.edu.monster.clienteescritorio.ClienteEscritorio` desde NetBeans o el IDE. En el login se puede editar el URL; por defecto es `http://localhost:8080/REST_ConUni_Java_GR07/api/`.
+Ejecuta `ec.edu.monster.clienteescritorio.ClienteEscritorio` desde NetBeans o el IDE. En el login, pulsa la flecha para desplegar el campo **Servidor** y escribir otra URL; plegado, se usa la dirección configurada. Por defecto es `http://localhost:8080/REST_ConUni_Java_GR07/api/`.
 
 ## Uso y arquitectura
 

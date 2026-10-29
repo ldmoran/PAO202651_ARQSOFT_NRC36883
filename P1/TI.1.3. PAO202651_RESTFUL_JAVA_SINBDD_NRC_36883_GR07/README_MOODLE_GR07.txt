@@ -1,18 +1,23 @@
-DOCUMENTACIÓN – TI.1.3. RESTFUL EN JAVA SIN BDD
+══════════════════════════════════════
+      ARQUITECTURA DE SOFTWARE
+ DOCUMENTACIÓN – TI.1.3. RESTful EN JAVA SIN BDD
+══════════════════════════════════════
 
 Buen día, Ingeniero.
 
 Por medio del presente, adjuntamos el enlace correspondiente a la documentación de
 
-TI.1.3. RESTFUL EN JAVA SIN BDD de la asignatura de Arquitectura de Software.
+TI.1.3. RESTful EN JAVA SIN BDD de la asignatura de Arquitectura de Software.
 
-Enlace:
+🔗 Enlace:
 ENLACE_DE_GOOGLE_DRIVE_PENDIENTE (pegar aquí el enlace de la carpeta compartida)
 
 Grupo 7
+────────────────────────────
 • Miranda Alison
 • Morán Lenin
 • Vivanco Gabriel
+────────────────────────────
 
 Agradecemos su tiempo y revisión del trabajo presentado. Quedamos atentos a cualquier observación o comentario adicional.
 

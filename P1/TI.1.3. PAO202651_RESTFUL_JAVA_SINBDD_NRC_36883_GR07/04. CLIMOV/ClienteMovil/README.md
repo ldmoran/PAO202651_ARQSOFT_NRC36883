@@ -7,7 +7,7 @@ Cliente Android Java de la API REST JSON `REST_ConUni_Java_GR07`. La lógica de 
 - Android Studio con JDK 17, Android SDK 34 y Build Tools 35
 - Servidor REST desplegado (ver [README del servidor](../REST_ConUni_Java_GR07/README.md))
 
-Abre `ClienteMovil` en Android Studio, sincroniza Gradle y ejecuta en emulador o dispositivo.
+Abre `ClienteMovil` en Android Studio, sincroniza Gradle y ejecuta en emulador o dispositivo. En el login, toca la flecha para desplegar el campo **Servidor**; si queda plegado, se usa la URL predeterminada o la última URL guardada.
 
 ## Dirección del servidor
 
@@ -18,7 +18,7 @@ Abre `ClienteMovil` en Android Studio, sincroniza Gradle y ejecuta en emulador o
 
 Inicia sesión con `monster` / `monster9`, selecciona categoría y unidades consultadas al servidor, escribe el valor y convierte. El cliente guarda el token durante la sesión abierta y lo envía como Bearer; una respuesta de token inválido/expirado devuelve a login.
 
-`modelo/` contiene `RestClient` (HTTP/JSON con `HttpURLConnection`) y la respuesta estructurada; `controlador/` gestiona el token y lo comparte entre pantallas; `vista/` contiene las Activities y layouts.
+`modelo/` contiene `RestClient` (HTTP/JSON con `HttpURLConnection`) y la respuesta estructurada; `controlador/` gestiona el token y lo comparte entre pantallas; `vista/` contiene las Activities y layouts. Las pruebas HTTP usan OkHttp MockWebServer para funcionar en las pruebas locales de Android.
 
 ## Pruebas
 

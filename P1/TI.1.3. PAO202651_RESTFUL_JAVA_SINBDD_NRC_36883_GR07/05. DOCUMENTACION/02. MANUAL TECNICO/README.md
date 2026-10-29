@@ -24,4 +24,4 @@ Los tres últimos requieren cabecera `Authorization: Bearer <token>`. Vigencia p
 
 `controladores.rest` mapea HTTP/JSON; `controladores.manejadoresws` coordina operaciones; `seguridad` administra login y tokens; `servicios` contiene catálogo y conversores; `modelos.utilidades` implementa la respuesta uniforme.
 
-Los proyectos cliente contienen pruebas unitarias contra un servidor HTTP falso. Los cuatro proyectos Maven pueden validarse con `mvn test`; la app Android incluye pruebas JUnit ejecutables con `gradlew test`.
+Los proyectos cliente contienen pruebas unitarias contra un servidor HTTP falso. Los proyectos Maven pueden validarse con `mvn test`; las pruebas HTTP del cliente Android usan OkHttp MockWebServer y se ejecutan con `gradlew testDebugUnitTest` en una instalación con Android SDK configurado.

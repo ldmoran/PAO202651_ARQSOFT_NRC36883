@@ -29,7 +29,7 @@ public class ConvertirServlet extends HttpServlet {
             Servicios.responder(req, resp, RespuestaServicio.errorLocal("DATA-001", "El valor debe ser numérico"));
             return;
         }
-        RespuestaServicio r = Servicios.cliente(getServletContext()).convertir(
+        RespuestaServicio r = Servicios.cliente(getServletContext(), req).convertir(
                 req.getParameter("categoria"), valor, req.getParameter("origen"), req.getParameter("destino"), token);
         Servicios.responder(req, resp, r);
     }

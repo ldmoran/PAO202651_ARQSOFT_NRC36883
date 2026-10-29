@@ -1,6 +1,7 @@
 package ec.edu.monster.clienteweb.controlador;
 
 import ec.edu.monster.clienteweb.modelo.RespuestaServicio;
+import ec.edu.monster.clienteweb.modelo.RestClient;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +23,10 @@ public class CatalogoServlet extends HttpServlet {
             return;
         }
         String categoria = req.getParameter("categoria");
+        RestClient cliente = Servicios.cliente(getServletContext(), req);
         RespuestaServicio r = (categoria == null || categoria.isBlank())
-                ? Servicios.cliente(getServletContext()).obtenerCategorias(token)
-                : Servicios.cliente(getServletContext()).obtenerUnidades(token, categoria);
+                ? cliente.obtenerCategorias(token)
+                : cliente.obtenerUnidades(token, categoria);
         Servicios.responder(req, resp, r);
     }
 }

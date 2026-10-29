@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xmi:XMI xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmi:version="2.1">
+  <uml:Model xmi:id="model_activity" name="Conversor Monster - Actividad de conversión">
+    <packagedElement xmi:type="uml:Activity" xmi:id="activity_conversion" name="Flujo de conversión autenticada">
+      <node xmi:type="uml:InitialNode" xmi:id="n_start" name="Inicio" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_auth" name="Enviar solicitud de conversión" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_token" name="Validar token Bearer" />
+      <node xmi:type="uml:DecisionNode" xmi:id="n_valid" name="¿Token válido?" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_input" name="Validar valor y unidades" />
+      <node xmi:type="uml:DecisionNode" xmi:id="n_units" name="¿Unidades compatibles?" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_compute" name="Calcular resultado" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_response" name="Devolver HTTP 200 y JSON" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_auth_error" name="Devolver HTTP 401" />
+      <node xmi:type="uml:OpaqueAction" xmi:id="n_data_error" name="Devolver HTTP 400 o 422" />
+      <node xmi:type="uml:ActivityFinalNode" xmi:id="n_end" name="Fin" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_1" source="n_start" target="n_auth" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_2" source="n_auth" target="n_token" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_3" source="n_token" target="n_valid" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_4" source="n_valid" target="n_input" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_5" source="n_valid" target="n_auth_error" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_6" source="n_input" target="n_units" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_7" source="n_units" target="n_compute" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_8" source="n_units" target="n_data_error" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_9" source="n_compute" target="n_response" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_10" source="n_response" target="n_end" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_11" source="n_auth_error" target="n_end" />
+      <edge xmi:type="uml:ControlFlow" xmi:id="flow_12" source="n_data_error" target="n_end" />
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>

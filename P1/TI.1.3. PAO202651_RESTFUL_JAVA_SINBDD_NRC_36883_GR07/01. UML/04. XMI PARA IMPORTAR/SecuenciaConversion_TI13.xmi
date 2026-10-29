@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xmi:XMI xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmi:version="2.1">
+  <uml:Model xmi:id="model_sequence" name="Conversor Monster - Secuencia REST">
+    <packagedElement xmi:type="uml:Interaction" xmi:id="interaction_conversion" name="Conversión REST">
+      <lifeline xmi:id="ll_user" name="Usuario" />
+      <lifeline xmi:id="ll_client" name="Cliente" />
+      <lifeline xmi:id="ll_api" name="ConversionResource" />
+      <lifeline xmi:id="ll_handler" name="ManejadorConversion" />
+      <lifeline xmi:id="ll_tokens" name="GestorTokens" />
+      <lifeline xmi:id="ll_converter" name="CatalogoUnidades y Conversor" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_1" covered="ll_user" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_1" covered="ll_client" />
+      <message xmi:id="msg_1" name="Elegir categoría, unidades y valor" messageSort="synchCall" sendEvent="send_1" receiveEvent="receive_1" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_2" covered="ll_client" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_2" covered="ll_api" />
+      <message xmi:id="msg_2" name="POST /api/conversiones/{categoria} + Bearer" messageSort="synchCall" sendEvent="send_2" receiveEvent="receive_2" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_3" covered="ll_api" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_3" covered="ll_handler" />
+      <message xmi:id="msg_3" name="convertir(solicitud, token)" messageSort="synchCall" sendEvent="send_3" receiveEvent="receive_3" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_4" covered="ll_handler" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_4" covered="ll_tokens" />
+      <message xmi:id="msg_4" name="verificar(token)" messageSort="synchCall" sendEvent="send_4" receiveEvent="receive_4" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_5" covered="ll_handler" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_5" covered="ll_converter" />
+      <message xmi:id="msg_5" name="validar y convertir(unidades, valor)" messageSort="synchCall" sendEvent="send_5" receiveEvent="receive_5" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_6" covered="ll_converter" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_6" covered="ll_handler" />
+      <message xmi:id="msg_6" name="respuesta con resultado" messageSort="synchCall" sendEvent="send_6" receiveEvent="receive_6" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_7" covered="ll_handler" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_7" covered="ll_api" />
+      <message xmi:id="msg_7" name="RespuestaServicio OK-200" messageSort="synchCall" sendEvent="send_7" receiveEvent="receive_7" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_8" covered="ll_api" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_8" covered="ll_client" />
+      <message xmi:id="msg_8" name="HTTP 200 + JSON" messageSort="synchCall" sendEvent="send_8" receiveEvent="receive_8" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="send_9" covered="ll_client" />
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="receive_9" covered="ll_user" />
+      <message xmi:id="msg_9" name="Mostrar resultado" messageSort="synchCall" sendEvent="send_9" receiveEvent="receive_9" />
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>

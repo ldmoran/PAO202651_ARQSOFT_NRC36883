@@ -1,6 +1,7 @@
 package ec.edu.monster.controladores.rest;
 
 import ec.edu.monster.modelos.utilidades.RespuestaServicio;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 final class RespuestaHttp {
@@ -10,6 +11,7 @@ final class RespuestaHttp {
 
     static Response desde(RespuestaServicio respuesta) {
         return Response.status(estadoHttp(respuesta))
+                .type(MediaType.APPLICATION_JSON_TYPE)
                 .entity(respuesta)
                 .build();
     }

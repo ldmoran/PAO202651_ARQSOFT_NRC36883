@@ -15,14 +15,25 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
-        RespuestaServicio r = Servicios.cliente(getServletContext())
+        String servidor = req.getParameter("servidor") == null ? "" : req.getParameter("servidor").trim();
+        if (!servidor.isEmpty() && !Servicios.urlValida(servidor)) {
+            Json.escribir(resp, HttpServletResponse.SC_BAD_REQUEST, Json.de(RespuestaServicio.errorLocal(
+                    "DATA-001", "La dirección del servidor debe ser una URL HTTP o HTTPS válida")));
+            return;
+        }
+        RespuestaServicio r = (servidor.isEmpty() ? Servicios.cliente(getServletContext())
+                : Servicios.cliente(getServletContext(), servidor))
                 .login(req.getParameter("usuario"), req.getParameter("clave"));
         if (r.esExitosa() && r.getToken() != null) {
             HttpSession anterior = req.getSession(false);
             if (anterior != null) {
                 anterior.invalidate(); // nueva sesion en cada login
             }
-            req.getSession(true).setAttribute(Servicios.ATRIBUTO_TOKEN, r.getToken());
+            HttpSession nueva = req.getSession(true);
+            nueva.setAttribute(Servicios.ATRIBUTO_TOKEN, r.getToken());
+            if (!servidor.isEmpty()) {
+                nueva.setAttribute(Servicios.ATRIBUTO_SERVIDOR, servidor);
+            }
             Json.escribir(resp, HttpServletResponse.SC_OK, Json.de(r));
         } else {
             int http = RespuestaServicio.COD_RED.equals(r.getCodigo())

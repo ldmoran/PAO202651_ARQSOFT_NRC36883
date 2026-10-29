@@ -46,14 +46,20 @@
                 android:textSize="13sp" />
 
             <TextView
+                android:id="@+id/lblServidor"
                 style="@style/Etiqueta"
-                android:text="@string/servidor" />
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/servidor"
+                android:drawableLeft="@drawable/ic_flecha_der"
+                android:drawablePadding="8dp" />
 
             <EditText
                 android:id="@+id/txtServidor"
                 style="@style/Campo"
                 android:importantForAutofill="no"
-                android:inputType="textUri" />
+                android:inputType="textUri"
+                android:visibility="gone" />
 
             <TextView
                 style="@style/Etiqueta"

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xmi:XMI xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmi:version="2.1">
+  <uml:Model xmi:id="model_usecases" name="Conversor Monster - Casos de uso">
+    <packagedElement xmi:type="uml:Actor" xmi:id="actor_user" name="Usuario" />
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_login" name="Iniciar sesión" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_user_uc_login" name="Usuario usa Iniciar sesión">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_login_a" type="actor_user" name="actor" association="as_user_uc_login" />
+      <memberEnd xmi:idref="as_user_uc_login_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_login_b" type="uc_login" name="caso" association="as_user_uc_login" />
+      <memberEnd xmi:idref="as_user_uc_login_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_categories" name="Consultar categorías" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_user_uc_categories" name="Usuario usa Consultar categorías">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_categories_a" type="actor_user" name="actor" association="as_user_uc_categories" />
+      <memberEnd xmi:idref="as_user_uc_categories_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_categories_b" type="uc_categories" name="caso" association="as_user_uc_categories" />
+      <memberEnd xmi:idref="as_user_uc_categories_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_units" name="Consultar unidades" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_user_uc_units" name="Usuario usa Consultar unidades">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_units_a" type="actor_user" name="actor" association="as_user_uc_units" />
+      <memberEnd xmi:idref="as_user_uc_units_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_units_b" type="uc_units" name="caso" association="as_user_uc_units" />
+      <memberEnd xmi:idref="as_user_uc_units_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_convert" name="Convertir unidades" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_user_uc_convert" name="Usuario usa Convertir unidades">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_convert_a" type="actor_user" name="actor" association="as_user_uc_convert" />
+      <memberEnd xmi:idref="as_user_uc_convert_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_convert_b" type="uc_convert" name="caso" association="as_user_uc_convert" />
+      <memberEnd xmi:idref="as_user_uc_convert_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_logout" name="Cerrar sesión" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_user_uc_logout" name="Usuario usa Cerrar sesión">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_logout_a" type="actor_user" name="actor" association="as_user_uc_logout" />
+      <memberEnd xmi:idref="as_user_uc_logout_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_user_uc_logout_b" type="uc_logout" name="caso" association="as_user_uc_logout" />
+      <memberEnd xmi:idref="as_user_uc_logout_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Include" xmi:id="inc_cat_token" name="Validar token para categorías" includingCase="uc_categories" addition="uc_login" />
+    <packagedElement xmi:type="uml:Include" xmi:id="inc_units_token" name="Validar token para unidades" includingCase="uc_units" addition="uc_login" />
+    <packagedElement xmi:type="uml:Include" xmi:id="inc_convert_token" name="Validar token para conversión" includingCase="uc_convert" addition="uc_login" />
+    <packagedElement xmi:type="uml:UseCase" xmi:id="uc_validate_data" name="Validar datos de conversión" />
+    <packagedElement xmi:type="uml:Include" xmi:id="inc_convert_data" name="Validar datos" includingCase="uc_convert" addition="uc_validate_data" />
+  </uml:Model>
+</xmi:XMI>

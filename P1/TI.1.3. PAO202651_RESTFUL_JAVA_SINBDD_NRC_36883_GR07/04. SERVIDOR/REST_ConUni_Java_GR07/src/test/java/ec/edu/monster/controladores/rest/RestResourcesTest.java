@@ -1,6 +1,8 @@
 package ec.edu.monster.controladores.rest;
 
 import ec.edu.monster.modelos.utilidades.RespuestaServicio;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
@@ -97,14 +99,15 @@ class RestResourcesTest {
     }
 
     @Test
-    void jsonInvalidoDevuelve400ConRespuestaEstructurada() {
-        Response respuesta = new JsonInvalidoMapper().toResponse(
-                new jakarta.ws.rs.ProcessingException("Error deserializing object from entity stream."));
+    void jsonMalFormadoDevuelveErrorEstructurado400() {
+        Response respuesta = new JsonInvalidoMapper().toResponse(new ProcessingException("JSON invalido"));
 
         assertEquals(400, respuesta.getStatus());
+        assertEquals(MediaType.APPLICATION_JSON_TYPE, respuesta.getMediaType());
         RespuestaServicio error = (RespuestaServicio) respuesta.getEntity();
-        assertEquals("DATA-001", error.getCodigo());
         assertEquals("ERROR", error.getEstado());
+        assertEquals("DATA-001", error.getCodigo());
+        assertEquals("El cuerpo de la solicitud no es un JSON válido", error.getMensaje());
     }
 
     private String tokenValido() {

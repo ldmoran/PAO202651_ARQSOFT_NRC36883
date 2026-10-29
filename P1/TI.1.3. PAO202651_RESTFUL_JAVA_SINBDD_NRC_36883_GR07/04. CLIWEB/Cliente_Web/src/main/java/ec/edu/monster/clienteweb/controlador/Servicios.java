@@ -7,11 +7,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /** Acceso común de los servlets: cliente REST y token de la sesión. */
 public final class Servicios {
 
     public static final String ATRIBUTO_TOKEN = "token";
+    public static final String ATRIBUTO_SERVIDOR = "servidor";
 
     private Servicios() {
     }
@@ -20,6 +23,34 @@ public final class Servicios {
     public static RestClient cliente(ServletContext ctx) {
         String url = ctx.getInitParameter("conuni.url");
         return new RestClient(url);
+    }
+
+    public static RestClient cliente(ServletContext ctx, String url) {
+        return new RestClient(url == null || url.isBlank() ? ctx.getInitParameter("conuni.url") : url);
+    }
+
+    public static RestClient cliente(ServletContext ctx, HttpServletRequest req) {
+        HttpSession session = req.getSession(false);
+        String url = session == null ? null : (String) session.getAttribute(ATRIBUTO_SERVIDOR);
+        return cliente(ctx, url);
+    }
+
+    public static boolean urlValida(String url) {
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        try {
+            URI uri = new URI(url.trim());
+            String scheme = uri.getScheme();
+            return uri.isAbsolute()
+                    && ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))
+                    && uri.getHost() != null
+                    && uri.getRawUserInfo() == null
+                    && uri.getRawQuery() == null
+                    && uri.getRawFragment() == null;
+        } catch (URISyntaxException e) {
+            return false;
+        }
     }
 
     public static String token(HttpServletRequest req) {

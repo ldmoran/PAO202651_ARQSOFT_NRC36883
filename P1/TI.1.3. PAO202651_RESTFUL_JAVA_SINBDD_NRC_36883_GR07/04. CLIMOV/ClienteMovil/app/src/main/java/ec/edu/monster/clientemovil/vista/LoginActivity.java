@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,15 @@ public class LoginActivity extends Activity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         txtServidor.setText(prefs.getString(CLAVE_SERVIDOR, ControladorConversiones.urlPorDefecto()));
+
+        TextView lblServidor = findViewById(R.id.lblServidor);
+        lblServidor.setOnClickListener(v -> {
+            boolean mostrar = txtServidor.getVisibility() != View.VISIBLE;
+            txtServidor.setVisibility(mostrar ? View.VISIBLE : View.GONE);
+            lblServidor.setText(mostrar ? R.string.servidor : null);
+            lblServidor.setCompoundDrawablesWithIntrinsicBounds(
+                    mostrar ? R.drawable.ic_flecha_abajo : R.drawable.ic_flecha_der, 0, 0, 0);
+        });
 
         btnIngresar.setOnClickListener(v -> ingresar());
         txtClave.setOnEditorActionListener((v, accion, ev) -> {

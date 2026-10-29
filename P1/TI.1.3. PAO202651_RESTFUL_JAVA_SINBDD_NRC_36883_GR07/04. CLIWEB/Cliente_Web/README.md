@@ -18,6 +18,8 @@ Despliega `target/Cliente_Web_GR07.war` y abre `http://localhost:8080/Cliente_We
 
 Inicia sesión con `monster` / `monster9`; el navegador carga categorías y unidades y permite convertir unidades. La sesión web guarda el token en una cookie HttpOnly; al vencer o ser rechazado, el cliente pide iniciar sesión de nuevo.
 
+La dirección de la API se configura desde el login al desplegar la flecha **Servidor**. Si se deja vacío, usa el parámetro `conuni.url` de `WEB-INF/web.xml`. La URL elegida queda asociada a la sesión web para las consultas de catálogo y conversiones.
+
 ## Estructura y pruebas
 
 `controlador/` contiene los servlets y el JSON de la interfaz; `modelo/` contiene `RestClient` y la respuesta; `webapp/` contiene las páginas, estilos e imágenes. `mvn test` prueba el cliente HTTP y la serialización sin requerir el servidor real.
