@@ -28,4 +28,6 @@ android {
 dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     testImplementation("junit:junit:4.13.2")
+    // Servidor HTTP falso para las pruebas: com.sun.net.httpserver no existe en las pruebas de Android
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }

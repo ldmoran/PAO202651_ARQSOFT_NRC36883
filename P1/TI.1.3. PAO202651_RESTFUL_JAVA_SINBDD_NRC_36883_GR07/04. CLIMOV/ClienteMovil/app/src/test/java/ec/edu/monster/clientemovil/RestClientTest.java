@@ -4,19 +4,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.sun.net.httpserver.HttpServer;
 import ec.edu.monster.clientemovil.controlador.ControladorConversiones;
 import ec.edu.monster.clientemovil.modelo.RespuestaServicio;
 import ec.edu.monster.clientemovil.modelo.RestClient;
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class RestClientTest {
 
-    private HttpServer server;
+    private MockWebServer server;
     private volatile String responseJson;
     private volatile String requestPath;
     private volatile String requestMethod;
@@ -26,29 +27,31 @@ public class RestClientTest {
 
     @Before
     public void startServer() throws Exception {
-        server = HttpServer.create(new InetSocketAddress(0), 0);
-        server.createContext("/app/", exchange -> {
-            requestPath = exchange.getRequestURI().getPath();
-            requestMethod = exchange.getRequestMethod();
-            authorization = exchange.getRequestHeaders().getFirst("Authorization");
-            requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            byte[] body = responseJson.getBytes(StandardCharsets.UTF_8);
-            exchange.getResponseHeaders().add("Content-Type", "application/json; charset=utf-8");
-            exchange.sendResponseHeaders(responseStatus, body.length);
-            exchange.getResponseBody().write(body);
-            exchange.close();
+        server = new MockWebServer();
+        server.setDispatcher(new Dispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest request) {
+                requestPath = request.getPath();
+                requestMethod = request.getMethod();
+                authorization = request.getHeader("Authorization");
+                requestBody = request.getBody().readUtf8();
+                return new MockResponse()
+                        .setResponseCode(responseStatus)
+                        .setHeader("Content-Type", "application/json; charset=utf-8")
+                        .setBody(responseJson);
+            }
         });
         server.start();
         responseStatus = 200;
     }
 
     @After
-    public void stopServer() {
-        server.stop(0);
+    public void stopServer() throws Exception {
+        server.shutdown();
     }
 
     private RestClient client() {
-        return new RestClient("http://localhost:" + server.getAddress().getPort() + "/app");
+        return new RestClient("http://localhost:" + server.getPort() + "/app");
     }
 
     @Test
@@ -107,10 +110,11 @@ public class RestClientTest {
     }
 
     @Test
-    public void stoppedServerIsReportedAsNetworkError() {
-        server.stop(0);
+    public void stoppedServerIsReportedAsNetworkError() throws Exception {
+        RestClient client = client();
+        server.shutdown();
 
-        RespuestaServicio response = client().login("a", "b");
+        RespuestaServicio response = client.login("a", "b");
 
         assertEquals(RespuestaServicio.COD_RED, response.getCodigo());
     }

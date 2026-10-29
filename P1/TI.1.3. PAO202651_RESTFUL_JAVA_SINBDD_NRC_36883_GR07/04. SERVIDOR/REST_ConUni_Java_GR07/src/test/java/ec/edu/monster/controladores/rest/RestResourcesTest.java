@@ -96,6 +96,17 @@ class RestResourcesTest {
         assertEquals("DATA-001", ((RespuestaServicio) respuesta.getEntity()).getCodigo());
     }
 
+    @Test
+    void jsonInvalidoDevuelve400ConRespuestaEstructurada() {
+        Response respuesta = new JsonInvalidoMapper().toResponse(
+                new jakarta.ws.rs.ProcessingException("Error deserializing object from entity stream."));
+
+        assertEquals(400, respuesta.getStatus());
+        RespuestaServicio error = (RespuestaServicio) respuesta.getEntity();
+        assertEquals("DATA-001", error.getCodigo());
+        assertEquals("ERROR", error.getEstado());
+    }
+
     private String tokenValido() {
         RespuestaServicio login = (RespuestaServicio) new LoginResource()
                 .login(new SolicitudLogin("monster", "monster9"))
