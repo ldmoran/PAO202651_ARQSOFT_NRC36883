@@ -25,3 +25,5 @@ Los tres últimos requieren cabecera `Authorization: Bearer <token>`. Vigencia p
 `controladores.rest` mapea HTTP/JSON; `controladores.manejadoresws` coordina operaciones; `seguridad` administra login y tokens; `servicios` contiene catálogo y conversores; `modelos.utilidades` implementa la respuesta uniforme.
 
 Los proyectos cliente contienen pruebas unitarias contra un servidor HTTP falso. Los proyectos Maven pueden validarse con `mvn test`; las pruebas HTTP del cliente Android usan OkHttp MockWebServer y se ejecutan con `gradlew testDebugUnitTest` en una instalación con Android SDK configurado.
+
+El manual Word incorpora los cinco diagramas exportados desde PowerDesigner. Sus modelos editables `.oom` y las imágenes `.png` están en `../../01. UML/03. DIAGRAMAS`.

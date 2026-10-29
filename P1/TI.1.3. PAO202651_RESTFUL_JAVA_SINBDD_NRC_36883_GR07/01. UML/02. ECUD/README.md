@@ -1,6 +1,6 @@
-# Casos de uso - TI.1.3
+# Especificación de casos de uso - TI.1.3
 
-El diagrama en `DiagramaCasosUso.puml` resume el alcance funcional.
+La especificación está en `ECUD_TI_1.3_GR07.docx`. El diagrama de casos de uso se elaboró en PowerDesigner y se incluye en el documento; sus archivos editables y PNG están en `../03. DIAGRAMAS/01_CASOS_USO`.
 
 | Caso | Nombre | Precondición | Resultado |
 |---|---|---|---|
