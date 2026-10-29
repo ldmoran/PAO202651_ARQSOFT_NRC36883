@@ -59,7 +59,28 @@ public class LoginFrame extends JFrame {
         c.anchor = GridBagConstraints.WEST;
         agregar(form, c, 0, "Usuario", txtUsuario);
         agregar(form, c, 1, "Clave", txtClave);
-        agregar(form, c, 2, "Servidor", txtServidor);
+        // El servidor va oculto: solo se muestra al pulsar "Servidor" (por defecto se usa la URL configurada).
+        final JLabel lblServidor = Estilo.etiqueta("");
+        lblServidor.setToolTipText("Servidor");
+        lblServidor.setIcon(new Flecha(false));
+        lblServidor.setIconTextGap(6);
+        lblServidor.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+        txtServidor.setVisible(false);
+        lblServidor.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                boolean mostrar = !txtServidor.isVisible();
+                txtServidor.setVisible(mostrar);
+                lblServidor.setIcon(new Flecha(mostrar));
+                lblServidor.setText(mostrar ? "Servidor" : "");
+                LoginFrame.this.pack();
+            }
+        });
+        c.gridx = 0;
+        c.gridy = 2;
+        form.add(lblServidor, c);
+        c.gridx = 1;
+        form.add(txtServidor, c);
         raiz.add(form, BorderLayout.CENTER);
 
         // Boton y estado
@@ -125,6 +146,37 @@ public class LoginFrame extends JFrame {
                 }
             }
         }.execute();
+    }
+
+    /** Flechita del desplegable "Servidor": hacia la derecha si esta plegado, hacia abajo si esta desplegado. */
+    private static final class Flecha implements javax.swing.Icon {
+
+        private final boolean abajo;
+
+        Flecha(boolean abajo) {
+            this.abajo = abajo;
+        }
+
+        @Override
+        public int getIconWidth() {
+            return 12;
+        }
+
+        @Override
+        public int getIconHeight() {
+            return 12;
+        }
+
+        @Override
+        public void paintIcon(java.awt.Component c, java.awt.Graphics g, int x, int y) {
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(Estilo.AZUL);
+            int[] px = abajo ? new int[] {x + 1, x + 11, x + 6} : new int[] {x + 3, x + 3, x + 10};
+            int[] py = abajo ? new int[] {y + 3, y + 3, y + 10} : new int[] {y + 1, y + 11, y + 6};
+            g2.fillPolygon(px, py, 3);
+            g2.dispose();
+        }
     }
 
     // Acceso para pruebas

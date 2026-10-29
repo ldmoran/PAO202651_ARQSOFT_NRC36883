@@ -12,6 +12,7 @@ import java.io.IOException;
 public final class Servicios {
 
     public static final String ATRIBUTO_TOKEN = "token";
+    public static final String ATRIBUTO_SERVIDOR = "servidor";
 
     private Servicios() {
     }
@@ -20,6 +21,18 @@ public final class Servicios {
     public static SoapClient cliente(ServletContext ctx) {
         String url = ctx.getInitParameter("conuni.url");
         return new SoapClient(url);
+    }
+
+    /** Cliente SOAP con el servidor que se escribio al iniciar sesion; si no se escribio, el de web.xml. */
+    public static SoapClient cliente(ServletContext ctx, HttpServletRequest req) {
+        HttpSession s = req.getSession(false);
+        String url = s == null ? null : (String) s.getAttribute(ATRIBUTO_SERVIDOR);
+        return url == null ? cliente(ctx) : new SoapClient(url);
+    }
+
+    /** La direccion del servidor debe ser una URL http o https. */
+    public static boolean urlValida(String url) {
+        return url != null && (url.regionMatches(true, 0, "http://", 0, 7) || url.regionMatches(true, 0, "https://", 0, 8));
     }
 
     public static String token(HttpServletRequest req) {

@@ -23,8 +23,8 @@ public class CatalogoServlet extends HttpServlet {
         }
         String categoria = req.getParameter("categoria");
         RespuestaServicio r = (categoria == null || categoria.isBlank())
-                ? Servicios.cliente(getServletContext()).obtenerCategorias(token)
-                : Servicios.cliente(getServletContext()).obtenerUnidades(token, categoria);
+                ? Servicios.cliente(getServletContext(), req).obtenerCategorias(token)
+                : Servicios.cliente(getServletContext(), req).obtenerUnidades(token, categoria);
         Servicios.responder(req, resp, r);
     }
 }

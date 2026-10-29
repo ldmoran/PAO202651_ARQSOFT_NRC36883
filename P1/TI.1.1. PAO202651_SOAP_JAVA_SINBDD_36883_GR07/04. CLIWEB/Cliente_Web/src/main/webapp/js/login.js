@@ -19,6 +19,7 @@ document.getElementById("formLogin").addEventListener("submit", async (ev) => {
       body: formulario({
         usuario: document.getElementById("usuario").value,
         clave: document.getElementById("clave").value,
+        servidor: document.getElementById("servidor").value,
       }),
     });
     if (r.datos && r.datos.estado === "OK") {

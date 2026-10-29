@@ -67,7 +67,8 @@ button.secundario:hover:not(:disabled) { background: var(--celeste); }
 /* ---------- servidor (opcional) ---------- */
 details.servidor { margin-top: 1rem; font-size: .85rem; color: #5b6b86; }
 details.servidor summary { cursor: pointer; }
-details.servidor input { margin-top: .4rem; }
+details.servidor label { display: block; margin-top: .4rem; font-weight: 600; }
+details.servidor input { margin-top: .2rem; }
 
 /* ================= Login ================= */
 .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; }

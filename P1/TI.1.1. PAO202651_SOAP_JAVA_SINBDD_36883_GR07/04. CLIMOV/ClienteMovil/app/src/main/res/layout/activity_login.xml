@@ -47,16 +47,6 @@
 
             <TextView
                 style="@style/Etiqueta"
-                android:text="@string/servidor" />
-
-            <EditText
-                android:id="@+id/txtServidor"
-                style="@style/Campo"
-                android:importantForAutofill="no"
-                android:inputType="textUri" />
-
-            <TextView
-                style="@style/Etiqueta"
                 android:text="@string/usuario" />
 
             <EditText
@@ -74,6 +64,22 @@
                 style="@style/Campo"
                 android:importantForAutofill="no"
                 android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/lblServidor"
+                style="@style/Etiqueta"
+                android:clickable="true"
+                android:focusable="true"
+                android:drawableLeft="@drawable/ic_flecha_der"
+                android:drawablePadding="8dp"
+                android:contentDescription="Servidor" />
+
+            <EditText
+                android:id="@+id/txtServidor"
+                style="@style/Campo"
+                android:importantForAutofill="no"
+                android:inputType="textUri"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/btnIngresar"
