@@ -1,17 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
+    <title>Conversión de Unidades Monster - API REST</title>
     <meta charset="UTF-8">
-    <title>Conversor de Unidades Monster REST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1f2937; }
+        h1 { color: #1f3864; }
+        table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+        th, td { border: 1px solid #c7d2e5; padding: .5rem .7rem; text-align: left; }
+        th { background: #4f81bd; color: #fff; }
+        code { background: #eef2f9; padding: 0 .3rem; }
+    </style>
 </head>
 <body>
-    <h1>Conversor de Unidades Monster</h1>
-    <p>API REST JSON disponible en <code>/api</code>.</p>
-    <ul>
-        <li><code>POST /api/auth/login</code></li>
-        <li><code>GET /api/catalogo/categorias</code></li>
-        <li><code>GET /api/catalogo/{categoria}/unidades</code></li>
-        <li><code>POST /api/conversiones/{categoria}</code></li>
-    </ul>
+    <h1>Conversión de Unidades Monster</h1>
+    <p>API REST (Jakarta REST, JSON sobre HTTP) del Grupo 07. Primero se llama a <code>POST /api/auth/login</code> para obtener un token;
+       ese token se envía en el encabezado <code>Authorization: Bearer</code> en el catálogo y en cada conversión.</p>
+    <table>
+        <tr><th>Recurso</th><th>Método y URI</th><th>Entrada</th></tr>
+        <tr><td>LoginResource</td><td><code>POST /api/auth/login</code></td><td>JSON: usuario, clave</td></tr>
+        <tr><td>CatalogoResource</td><td><code>GET /api/catalogo/categorias</code><br><code>GET /api/catalogo/{categoria}/unidades</code></td><td>Authorization: Bearer token</td></tr>
+        <tr><td>ConversionResource</td><td><code>POST /api/conversiones/{categoria}</code></td><td>JSON: valor, unidadOrigen, unidadDestino; Authorization: Bearer token</td></tr>
+    </table>
+    <p>Todos los recursos devuelven <code>estado</code>, <code>codigo</code> y <code>mensaje</code>, con <code>resultado</code>,
+       <code>unidadOrigen</code> y <code>unidadDestino</code> en las conversiones, <code>token</code> en el login y <code>datos</code> en el catálogo.
+       El código de estado HTTP indica el resultado (200, 400, 401, 422 o 500).</p>
 </body>
 </html>
