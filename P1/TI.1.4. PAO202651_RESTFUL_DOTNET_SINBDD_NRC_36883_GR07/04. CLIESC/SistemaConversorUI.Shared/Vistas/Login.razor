@@ -1,0 +1,118 @@
+@page "/"
+@inject SesionCliente Sesion
+@inject NavigationManager Navegacion
+
+<PageTitle>Conversión de Unidades Monster - Iniciar sesión</PageTitle>
+
+<main class="login-page">
+
+    @* Fondo con 4 imágenes: solo el cliente web las define (wwwroot/login/slide1..4.jpg del proyecto ClienteWeb y su web.css) *@
+    <div class="login-background" aria-hidden="true">
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+    </div>
+
+    <section class="login-panel">
+        @* En pantallas angostas (móvil) se muestra este banner y el panel se vuelve una tarjeta *@
+        <img class="login-banner" src="_content/SistemaConversorUI.Shared/monster.jpg" alt="Monster">
+
+        <div class="login-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13l-3-3M17 17H4l3 3" /></svg>
+            <span>Monster</span>
+        </div>
+
+        <div class="login-form" @onkeydown="Teclado">
+            <h1>Conversión de Unidades Monster</h1>
+            <p>Longitud · Masa · Temperatura. Ingrese sus credenciales para continuar.</p>
+
+            <label for="usuario" class="visually-hidden">Usuario</label>
+            <div class="login-input">
+                <span class="login-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+                </span>
+                <input id="usuario" @bind="usuario" @bind:event="oninput" autocomplete="username" placeholder="Usuario" />
+            </div>
+
+            <label for="clave" class="visually-hidden">Clave</label>
+            <div class="login-input">
+                <span class="login-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4" /><path d="M11 12l9-9M16 7l3 3M14 9l2 2" /></svg>
+                </span>
+                <input id="clave" type="password" @bind="clave" @bind:event="oninput" autocomplete="current-password" placeholder="Clave" />
+            </div>
+
+            <details class="servidor">
+                <summary>Servidor</summary>
+                <input id="servidor" @bind="servidor" @bind:event="oninput" autocomplete="off" />
+            </details>
+
+            <button id="btnIngresar" type="button" class="login-btn" @onclick="Ingresar" disabled="@ocupado">Ingresar</button>
+
+            <div class="estado @claseEstado" role="status" aria-live="polite">@mensaje</div>
+
+            <div class="login-help">Arquitectura de Software · ESPE · GR07 · .NET REST</div>
+        </div>
+    </section>
+
+</main>
+
+@code {
+    private string usuario = "";
+    private string clave = "";
+    private string servidor = "";
+    private string mensaje = "";
+    private string claseEstado = "";
+    private bool ocupado;
+
+    protected override void OnInitialized()
+    {
+        servidor = Sesion.UrlServidor;
+        if (Sesion.HaySesion)
+        {
+            Navegacion.NavigateTo("conversor");
+        }
+    }
+
+    private async Task Teclado(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Ingresar();
+        }
+    }
+
+    private async Task Ingresar()
+    {
+        if (ocupado)
+        {
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(clave))
+        {
+            Mostrar("Ingrese usuario y clave.", "error");
+            return;
+        }
+        ocupado = true;
+        Mostrar("Verificando...", "info");
+        if (!string.IsNullOrWhiteSpace(servidor) && servidor.Trim() != Sesion.UrlServidor)
+        {
+            Sesion.CambiarServidor(servidor.Trim());
+        }
+        var r = await Sesion.IniciarSesion(usuario, clave);
+        ocupado = false;
+        if (r.EsExitosa)
+        {
+            Navegacion.NavigateTo("conversor");
+            return;
+        }
+        Mostrar($"[{r.Codigo}] {r.Mensaje}", "error");
+    }
+
+    private void Mostrar(string texto, string clase)
+    {
+        mensaje = texto;
+        claseEstado = clase;
+    }
+}

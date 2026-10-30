@@ -1,0 +1,17 @@
+#components-reconnect-modal {
+    display: none;
+}
+
+    #components-reconnect-modal.components-reconnect-show,
+    #components-reconnect-modal.components-reconnect-failed,
+    #components-reconnect-modal.components-reconnect-rejected {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+    }
