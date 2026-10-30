@@ -10,7 +10,7 @@
     <Nullable>enable</Nullable>
     <EnableDefaultCssItems>false</EnableDefaultCssItems>
 
-    <ApplicationTitle>Conversión Monster</ApplicationTitle>
+    <ApplicationTitle>Restful Dotnet Conversion</ApplicationTitle>
     <ApplicationId>ec.edu.monster.clientemovil</ApplicationId>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
