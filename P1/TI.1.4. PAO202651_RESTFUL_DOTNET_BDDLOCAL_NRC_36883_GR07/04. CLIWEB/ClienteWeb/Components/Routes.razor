@@ -1,0 +1,11 @@
+@using ec.edu.monster.Cliente.Servicios
+
+<Router AppAssembly="typeof(SesionCliente).Assembly" AdditionalAssemblies="new[] { typeof(Program).Assembly }">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <main class="tarjeta"><div class="caja"><h1 class="titulo">Página no encontrada</h1></div></main>
+    </NotFound>
+</Router>

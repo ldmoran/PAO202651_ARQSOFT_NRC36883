@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xmi:XMI xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmi:version="2.1">
+  <uml:Model xmi:id="model_classes" name="Conversor Monster - Modelo de clases">
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="primitive_1" name="String" />
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="primitive_2" name="Double" />
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="primitive_3" name="Boolean" />
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="primitive_4" name="void" />
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_RestApplication" name="RestApplication" />
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_LoginResource" name="LoginResource">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_LoginResource_login" name="login">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_LoginResource_login_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_CatalogoResource" name="CatalogoResource">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_CatalogoResource_obtenerCategorias" name="obtenerCategorias">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_CatalogoResource_obtenerCategorias_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_CatalogoResource_obtenerUnidades" name="obtenerUnidades">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_CatalogoResource_obtenerUnidades_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ConversionResource" name="ConversionResource">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ConversionResource_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ConversionResource_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ManejadorLogin" name="ManejadorLogin">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ManejadorLogin_autenticar" name="autenticar">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ManejadorLogin_autenticar_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ManejadorCatalogo" name="ManejadorCatalogo">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ManejadorCatalogo_obtenerCategorias" name="obtenerCategorias">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ManejadorCatalogo_obtenerCategorias_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ManejadorCatalogo_obtenerUnidades" name="obtenerUnidades">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ManejadorCatalogo_obtenerUnidades_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ManejadorConversion" name="ManejadorConversion">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ManejadorConversion_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ManejadorConversion_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ServicioAutenticacion" name="ServicioAutenticacion">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ServicioAutenticacion_autenticar" name="autenticar">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ServicioAutenticacion_autenticar_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_GestorTokens" name="GestorTokens">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_GestorTokens_generar" name="generar">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_GestorTokens_generar_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_GestorTokens_validar" name="validar">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_GestorTokens_validar_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_GestorTokens_verificar" name="verificar">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_GestorTokens_verificar_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_CatalogoUnidades" name="CatalogoUnidades">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_CatalogoUnidades_obtenerCategorias" name="obtenerCategorias">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_CatalogoUnidades_obtenerCategorias_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_CatalogoUnidades_obtenerUnidades" name="obtenerUnidades">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_CatalogoUnidades_obtenerUnidades_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="cls_Conversor" name="Conversor">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_Conversor_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_Conversor_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_Conversor_obtenerUnidades" name="obtenerUnidades">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_Conversor_obtenerUnidades_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ConversorLongitud" name="ConversorLongitud">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ConversorLongitud_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ConversorLongitud_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ConversorMasa" name="ConversorMasa">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ConversorMasa_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ConversorMasa_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_ConversorTemperatura" name="ConversorTemperatura">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_ConversorTemperatura_convertir" name="convertir">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_ConversorTemperatura_convertir_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_RespuestaServicio" name="RespuestaServicio">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_estado" name="estado" type="primitive_1" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_codigo" name="codigo" type="primitive_1" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_mensaje" name="mensaje" type="primitive_1" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_resultado" name="resultado" type="primitive_2" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_unidadOrigen" name="unidadOrigen" type="primitive_1" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_unidadDestino" name="unidadDestino" type="primitive_1" />
+      <ownedAttribute xmi:type="uml:Property" xmi:id="cls_RespuestaServicio_token" name="token" type="primitive_1" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_RespuestaMapeador" name="RespuestaMapeador">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_RespuestaMapeador_exito" name="exito">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_RespuestaMapeador_exito_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_RespuestaMapeador_exitoLogin" name="exitoLogin">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_RespuestaMapeador_exitoLogin_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_RespuestaMapeador_exitoConversion" name="exitoConversion">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_RespuestaMapeador_exitoConversion_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_RespuestaMapeador_error" name="error">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_RespuestaMapeador_error_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="cls_JsonInvalidoMapper" name="JsonInvalidoMapper">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="cls_JsonInvalidoMapper_toResponse" name="toResponse">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="cls_JsonInvalidoMapper_toResponse_return" name="return" direction="return" type="primitive_1" />
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Generalization" xmi:id="gen_ConversorLongitud" name="ConversorLongitud implements Conversor" specific="cls_ConversorLongitud" general="cls_Conversor" />
+    <packagedElement xmi:type="uml:Generalization" xmi:id="gen_ConversorMasa" name="ConversorMasa implements Conversor" specific="cls_ConversorMasa" general="cls_Conversor" />
+    <packagedElement xmi:type="uml:Generalization" xmi:id="gen_ConversorTemperatura" name="ConversorTemperatura implements Conversor" specific="cls_ConversorTemperatura" general="cls_Conversor" />
+    <packagedElement xmi:type="uml:Association" xmi:id="as_LoginResource_ManejadorLogin" name="LoginResource utiliza ManejadorLogin">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_LoginResource_ManejadorLogin_a" type="cls_LoginResource" name="cliente" association="as_LoginResource_ManejadorLogin" />
+      <memberEnd xmi:idref="as_LoginResource_ManejadorLogin_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_LoginResource_ManejadorLogin_b" type="cls_ManejadorLogin" name="servicio" association="as_LoginResource_ManejadorLogin" />
+      <memberEnd xmi:idref="as_LoginResource_ManejadorLogin_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_CatalogoResource_ManejadorCatalogo" name="CatalogoResource utiliza ManejadorCatalogo">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_CatalogoResource_ManejadorCatalogo_a" type="cls_CatalogoResource" name="cliente" association="as_CatalogoResource_ManejadorCatalogo" />
+      <memberEnd xmi:idref="as_CatalogoResource_ManejadorCatalogo_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_CatalogoResource_ManejadorCatalogo_b" type="cls_ManejadorCatalogo" name="servicio" association="as_CatalogoResource_ManejadorCatalogo" />
+      <memberEnd xmi:idref="as_CatalogoResource_ManejadorCatalogo_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ConversionResource_ManejadorConversion" name="ConversionResource utiliza ManejadorConversion">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ConversionResource_ManejadorConversion_a" type="cls_ConversionResource" name="cliente" association="as_ConversionResource_ManejadorConversion" />
+      <memberEnd xmi:idref="as_ConversionResource_ManejadorConversion_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ConversionResource_ManejadorConversion_b" type="cls_ManejadorConversion" name="servicio" association="as_ConversionResource_ManejadorConversion" />
+      <memberEnd xmi:idref="as_ConversionResource_ManejadorConversion_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorLogin_ServicioAutenticacion" name="ManejadorLogin utiliza ServicioAutenticacion">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorLogin_ServicioAutenticacion_a" type="cls_ManejadorLogin" name="cliente" association="as_ManejadorLogin_ServicioAutenticacion" />
+      <memberEnd xmi:idref="as_ManejadorLogin_ServicioAutenticacion_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorLogin_ServicioAutenticacion_b" type="cls_ServicioAutenticacion" name="servicio" association="as_ManejadorLogin_ServicioAutenticacion" />
+      <memberEnd xmi:idref="as_ManejadorLogin_ServicioAutenticacion_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorLogin_GestorTokens" name="ManejadorLogin utiliza GestorTokens">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorLogin_GestorTokens_a" type="cls_ManejadorLogin" name="cliente" association="as_ManejadorLogin_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorLogin_GestorTokens_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorLogin_GestorTokens_b" type="cls_GestorTokens" name="servicio" association="as_ManejadorLogin_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorLogin_GestorTokens_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorCatalogo_GestorTokens" name="ManejadorCatalogo utiliza GestorTokens">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorCatalogo_GestorTokens_a" type="cls_ManejadorCatalogo" name="cliente" association="as_ManejadorCatalogo_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorCatalogo_GestorTokens_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorCatalogo_GestorTokens_b" type="cls_GestorTokens" name="servicio" association="as_ManejadorCatalogo_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorCatalogo_GestorTokens_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorCatalogo_CatalogoUnidades" name="ManejadorCatalogo utiliza CatalogoUnidades">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorCatalogo_CatalogoUnidades_a" type="cls_ManejadorCatalogo" name="cliente" association="as_ManejadorCatalogo_CatalogoUnidades" />
+      <memberEnd xmi:idref="as_ManejadorCatalogo_CatalogoUnidades_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorCatalogo_CatalogoUnidades_b" type="cls_CatalogoUnidades" name="servicio" association="as_ManejadorCatalogo_CatalogoUnidades" />
+      <memberEnd xmi:idref="as_ManejadorCatalogo_CatalogoUnidades_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorConversion_GestorTokens" name="ManejadorConversion utiliza GestorTokens">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorConversion_GestorTokens_a" type="cls_ManejadorConversion" name="cliente" association="as_ManejadorConversion_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorConversion_GestorTokens_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorConversion_GestorTokens_b" type="cls_GestorTokens" name="servicio" association="as_ManejadorConversion_GestorTokens" />
+      <memberEnd xmi:idref="as_ManejadorConversion_GestorTokens_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_ManejadorConversion_CatalogoUnidades" name="ManejadorConversion utiliza CatalogoUnidades">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorConversion_CatalogoUnidades_a" type="cls_ManejadorConversion" name="cliente" association="as_ManejadorConversion_CatalogoUnidades" />
+      <memberEnd xmi:idref="as_ManejadorConversion_CatalogoUnidades_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_ManejadorConversion_CatalogoUnidades_b" type="cls_CatalogoUnidades" name="servicio" association="as_ManejadorConversion_CatalogoUnidades" />
+      <memberEnd xmi:idref="as_ManejadorConversion_CatalogoUnidades_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_RespuestaMapeador_RespuestaServicio" name="RespuestaMapeador utiliza RespuestaServicio">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_RespuestaMapeador_RespuestaServicio_a" type="cls_RespuestaMapeador" name="cliente" association="as_RespuestaMapeador_RespuestaServicio" />
+      <memberEnd xmi:idref="as_RespuestaMapeador_RespuestaServicio_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_RespuestaMapeador_RespuestaServicio_b" type="cls_RespuestaServicio" name="servicio" association="as_RespuestaMapeador_RespuestaServicio" />
+      <memberEnd xmi:idref="as_RespuestaMapeador_RespuestaServicio_b" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="as_JsonInvalidoMapper_RespuestaMapeador" name="JsonInvalidoMapper utiliza RespuestaMapeador">
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_JsonInvalidoMapper_RespuestaMapeador_a" type="cls_JsonInvalidoMapper" name="cliente" association="as_JsonInvalidoMapper_RespuestaMapeador" />
+      <memberEnd xmi:idref="as_JsonInvalidoMapper_RespuestaMapeador_a" />
+      <ownedEnd xmi:type="uml:Property" xmi:id="as_JsonInvalidoMapper_RespuestaMapeador_b" type="cls_RespuestaMapeador" name="servicio" association="as_JsonInvalidoMapper_RespuestaMapeador" />
+      <memberEnd xmi:idref="as_JsonInvalidoMapper_RespuestaMapeador_b" />
+    </packagedElement>
+  </uml:Model>
+</xmi:XMI>

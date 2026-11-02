@@ -1,0 +1,179 @@
+@page "/conversor"
+@using System.Globalization
+@inject SesionCliente Sesion
+@inject NavigationManager Navegacion
+
+<PageTitle>Conversión de Unidades Monster</PageTitle>
+
+<header class="barra">
+    <h1>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13l-3-3M17 17H4l3 3" /></svg>
+        Conversión de Unidades Monster
+    </h1>
+    <button type="button" @onclick="CerrarSesion">Cerrar sesión</button>
+</header>
+
+<main class="tarjeta">
+    <div class="caja">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" disabled="@(!listo)" value="@categoria" @onchange="CambiarCategoria">
+            @foreach (var c in categorias)
+            {
+                <option value="@c" selected="@(c == categoria)">@c</option>
+            }
+        </select>
+
+        <label for="origen">De</label>
+        <select id="origen" disabled="@(!listo)" @bind="origen">
+            @foreach (var u in unidades)
+            {
+                <option value="@u">@u</option>
+            }
+        </select>
+
+        <div class="fila-botones" style="margin-top:.8rem">
+            <button type="button" class="secundario" disabled="@(!listo)" @onclick="Intercambiar">⇅ Intercambiar</button>
+        </div>
+
+        <label for="destino">A</label>
+        <select id="destino" disabled="@(!listo)" @bind="destino">
+            @foreach (var u in unidades)
+            {
+                <option value="@u">@u</option>
+            }
+        </select>
+
+        <label for="valor">Valor</label>
+        <input id="valor" inputmode="decimal" autocomplete="off" placeholder="Ej: 12.5" disabled="@(!listo)"
+               @bind="valorTexto" @bind:event="oninput" @onkeydown="Teclado" />
+
+        <div class="fila-botones">
+            <button id="btnConvertir" type="button" disabled="@(!listo)" @onclick="Convertir">Convertir</button>
+        </div>
+    </div>
+
+    <div class="resultado" aria-live="polite">@resultado</div>
+    <div class="estado @claseEstado" role="status" aria-live="polite">@mensaje</div>
+
+    <p class="pie">Arquitectura de Software · ESPE · GR07 · .NET REST</p>
+</main>
+
+@code {
+    private List<string> categorias = new();
+    private List<string> unidades = new();
+    private string categoria = "";
+    private string origen = "";
+    private string destino = "";
+    private string valorTexto = "";
+    private string resultado = "Resultado";
+    private string mensaje = "";
+    private string claseEstado = "";
+    private bool listo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Sesion.HaySesion)
+        {
+            Navegacion.NavigateTo("");
+            return;
+        }
+        Mostrar("Cargando catálogo...", "info");
+        var r = await Sesion.Categorias();
+        if (!await Revisar(r))
+        {
+            return;
+        }
+        categorias = r.Datos;
+        categoria = categorias.FirstOrDefault() ?? "";
+        await CargarUnidades();
+    }
+
+    private async Task CambiarCategoria(ChangeEventArgs e)
+    {
+        categoria = e.Value?.ToString() ?? "";
+        await CargarUnidades();
+    }
+
+    private async Task CargarUnidades()
+    {
+        listo = false;
+        Mostrar($"Cargando unidades de {categoria}...", "info");
+        var r = await Sesion.Unidades(categoria);
+        if (!await Revisar(r))
+        {
+            return;
+        }
+        unidades = r.Datos;
+        origen = unidades.FirstOrDefault() ?? "";
+        destino = unidades.Count > 1 ? unidades[1] : origen;
+        resultado = "Resultado";
+        Mostrar("", "");
+        listo = true;
+    }
+
+    private void Intercambiar() => (origen, destino) = (destino, origen);
+
+    private async Task Teclado(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Convertir();
+        }
+    }
+
+    private async Task Convertir()
+    {
+        var texto = valorTexto.Trim().Replace(',', '.');
+        if (!double.TryParse(texto, NumberStyles.Float, CultureInfo.InvariantCulture, out var valor)
+            || double.IsNaN(valor) || double.IsInfinity(valor))
+        {
+            Mostrar("Ingrese un número válido (ejemplo: 12.5).", "error");
+            return;
+        }
+        listo = false;
+        Mostrar("Convirtiendo...", "info");
+        var r = await Sesion.Convertir(categoria, valor, origen, destino);
+        listo = true;
+        if (r.EsExitosa && r.Resultado != null)
+        {
+            resultado = $"{Formatear(valor)} {r.UnidadOrigen} = {Formatear(r.Resultado.Value)} {r.UnidadDestino}";
+            Mostrar(r.Mensaje ?? "", "exito");
+            return;
+        }
+        if (await Revisar(r))
+        {
+            Mostrar($"[{r.Codigo}] {r.Mensaje}", "error");
+        }
+    }
+
+    /// <summary>true si la respuesta sirve; si el token ya no vale, avisa y vuelve al login.</summary>
+    private Task<bool> Revisar(RespuestaServicio r)
+    {
+        if (r.RequiereNuevoLogin)
+        {
+            Navegacion.NavigateTo("");
+            return Task.FromResult(false);
+        }
+        if (!r.EsExitosa)
+        {
+            Mostrar($"[{r.Codigo}] {r.Mensaje}", "error");
+            return Task.FromResult(false);
+        }
+        return Task.FromResult(true);
+    }
+
+    private void CerrarSesion()
+    {
+        Sesion.CerrarSesion();
+        Navegacion.NavigateTo("");
+    }
+
+    private void Mostrar(string texto, string clase)
+    {
+        mensaje = texto;
+        claseEstado = clase;
+    }
+
+    private static string Formatear(double valor) =>
+        Math.Round((decimal)valor, 10, MidpointRounding.AwayFromZero).ToString("0.##########", CultureInfo.InvariantCulture);
+}

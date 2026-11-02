@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conversión de Unidades Monster</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+    <header class="barra">
+        <h1>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h13l-3-3M17 17H4l3 3"/></svg>
+            Conversión de Unidades Monster
+        </h1>
+        <button id="btnCerrar" type="button">Cerrar sesión</button>
+    </header>
+    <main class="tarjeta">
+        <div class="caja">
+            <form id="formConversion" novalidate>
+                <label for="categoria">Categoría</label>
+                <select id="categoria" disabled></select>
+                <label for="origen">De</label>
+                <select id="origen" disabled></select>
+                <div class="fila-botones" style="margin-top:.8rem">
+                    <button id="btnIntercambiar" type="button" class="secundario" disabled>⇅ Intercambiar</button>
+                </div>
+                <label for="destino">A</label>
+                <select id="destino" disabled></select>
+                <label for="valor">Valor</label>
+                <input id="valor" inputmode="decimal" autocomplete="off" placeholder="Ej: 12.5" disabled>
+                <div class="fila-botones"><button id="btnConvertir" type="submit" disabled>Convertir</button></div>
+            </form>
+            <div id="resultado" class="resultado" aria-live="polite">Resultado</div>
+            <div id="estado" class="estado" role="status" aria-live="polite"></div>
+        </div>
+        <p class="pie">Arquitectura de Software · ESPE · GR07</p>
+    </main>
+    <script src="js/comun.js"></script>
+    <script src="js/conversor.js"></script>
+</body>
+</html>

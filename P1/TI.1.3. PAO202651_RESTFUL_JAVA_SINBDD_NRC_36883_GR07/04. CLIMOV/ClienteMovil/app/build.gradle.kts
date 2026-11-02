@@ -7,7 +7,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ec.edu.monster.clientemovil"
+        applicationId = "ec.edu.monster.clientemovil.rest"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

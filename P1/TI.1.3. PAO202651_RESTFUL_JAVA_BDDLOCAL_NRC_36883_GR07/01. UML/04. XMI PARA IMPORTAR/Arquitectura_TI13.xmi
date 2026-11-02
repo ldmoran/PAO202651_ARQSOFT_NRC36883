@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xmi:XMI xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmi:version="2.1">
+  <uml:Model xmi:id="model_architecture" name="Conversor Monster - Arquitectura REST">
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_console" name="Cliente consola Java" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_swing" name="Cliente escritorio Swing" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_web" name="Cliente web Jakarta Servlets" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_android" name="Cliente Android Java" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_api" name="API REST Jakarta" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_payara" name="Payara 6" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_resources" name="Recursos JAX-RS" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_handlers" name="Manejadores" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_security" name="Autenticación y gestor de tokens" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_domain" name="Catálogo y conversores" />
+    <packagedElement xmi:type="uml:Component" xmi:id="comp_memory" name="Estado en memoria (sin BDD)" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_1" name="HTTP/JSON" client="comp_console" supplier="comp_api" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_2" name="HTTP/JSON" client="comp_swing" supplier="comp_api" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_3" name="HTTP/JSON" client="comp_web" supplier="comp_api" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_4" name="HTTP/JSON" client="comp_android" supplier="comp_api" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_5" name="WAR desplegado" client="comp_api" supplier="comp_payara" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_6" name="publica" client="comp_api" supplier="comp_resources" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_7" name="delega" client="comp_resources" supplier="comp_handlers" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_8" name="valida Bearer" client="comp_handlers" supplier="comp_security" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_9" name="consulta y convierte" client="comp_handlers" supplier="comp_domain" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_10" name="tokens" client="comp_security" supplier="comp_memory" />
+    <packagedElement xmi:type="uml:Dependency" xmi:id="dep_11" name="catálogo" client="comp_domain" supplier="comp_memory" />
+  </uml:Model>
+</xmi:XMI>
