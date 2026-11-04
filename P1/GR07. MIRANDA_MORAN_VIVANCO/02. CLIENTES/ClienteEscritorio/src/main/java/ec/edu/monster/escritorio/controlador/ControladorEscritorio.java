@@ -8,7 +8,7 @@ import javax.swing.SwingWorker;
 /** Ejecuta las llamadas SOAP fuera del hilo de la interfaz para que la ventana no se congele. */
 public class ControladorEscritorio {
 
-    private final ComercializadoraSoap servicio;
+    private volatile ComercializadoraSoap servicio;
 
     public ControladorEscritorio(ComercializadoraSoap servicio) {
         this.servicio = servicio;
@@ -16,6 +16,16 @@ public class ControladorEscritorio {
 
     public ComercializadoraSoap servicio() {
         return servicio;
+    }
+
+    /** Cambia el servidor al que se conecta la aplicacion (por ejemplo, el de otro equipo de la red). */
+    public void conectarA(String url) {
+        this.servicio = new ComercializadoraSoap(url);
+    }
+
+    /** La direccion debe ser una URL http o https. */
+    public static boolean urlValida(String url) {
+        return url != null && (url.regionMatches(true, 0, "http://", 0, 7) || url.regionMatches(true, 0, "https://", 0, 8));
     }
 
     /** Llama a {@code tarea} en segundo plano y entrega el resultado (o el mensaje de error) en el hilo de Swing. */

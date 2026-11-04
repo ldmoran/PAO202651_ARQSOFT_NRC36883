@@ -24,6 +24,9 @@
               <transformers>
                 <transformer>
                   <mainClass>ec.edu.monster.escritorio.Main</mainClass>
+                  <manifestEntries>
+                    <Multi-Release>true</Multi-Release>
+                  </manifestEntries>
                 </transformer>
               </transformers>
             </configuration>
