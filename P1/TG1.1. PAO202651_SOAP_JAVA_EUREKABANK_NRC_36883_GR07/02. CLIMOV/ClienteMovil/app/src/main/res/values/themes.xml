@@ -1,0 +1,7 @@
+<resources>
+    <style name="TemaMonster" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/fondo</item>
+        <item name="android:colorAccent">@color/azul</item>
+        <item name="android:statusBarColor">@color/navy</item>
+    </style>
+</resources>

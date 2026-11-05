@@ -1,0 +1,10 @@
+<resources>
+    <color name="navy">#0B2A4A</color>
+    <color name="azul">#0F5C99</color>
+    <color name="oro">#F2B01E</color>
+    <color name="fondo">#F3F6FA</color>
+    <color name="error">#C0392B</color>
+    <color name="exito">#1B7F3B</color>
+    <color name="blanco">#FFFFFF</color>
+    <color name="borde">#D5DDE8</color>
+</resources>
