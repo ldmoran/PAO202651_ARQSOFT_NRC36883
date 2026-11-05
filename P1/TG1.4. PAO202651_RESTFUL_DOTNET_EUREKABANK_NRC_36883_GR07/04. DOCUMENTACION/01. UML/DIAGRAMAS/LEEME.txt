@@ -1,0 +1,10 @@
+Diagramas de esta carpeta:
+
+- CasosDeUso_EurekaBank.*       -> reutilizado de TG1.2 (SOAP). El negocio no cambia con el transporte.
+- Secuencia_Transferencia.*     -> reutilizado de TG1.2 (SOAP), misma razón.
+- Arquitectura_EurekaBank.*     -> diagrama ORIGINAL de TG1.2 (SOAP/CoreWCF/WSDL). Se conserva como referencia.
+- Arquitectura_EurekaBank_REST.png -> diagrama NUEVO de esta versión (REST/ASP.NET Core Web API/JSON).
+  Generado para este proyecto; no tiene archivo editable .oob/.oom (PowerDesigner) porque se creó con un script,
+  no con la herramienta de diagramado del grupo. Si se requiere editarlo con PowerDesigner, usar
+  Arquitectura_EurekaBank.oom como base y actualizar las etiquetas de "SOAP/WSDL/CoreWCF" a
+  "REST/JSON/ASP.NET Core Web API".

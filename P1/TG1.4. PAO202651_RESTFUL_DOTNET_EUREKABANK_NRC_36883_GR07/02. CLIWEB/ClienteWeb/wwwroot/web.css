@@ -1,0 +1,5 @@
+/* Imágenes de fondo del login: solo existen en el cliente web (el móvil y el escritorio no las cargan). */
+.login-slide:nth-child(1) { background-image: url("login/slide1.jpg"); }
+.login-slide:nth-child(2) { background-image: url("login/slide2.jpg"); }
+.login-slide:nth-child(3) { background-image: url("login/slide3.jpg"); }
+.login-slide:nth-child(4) { background-image: url("login/slide4.jpg"); }
