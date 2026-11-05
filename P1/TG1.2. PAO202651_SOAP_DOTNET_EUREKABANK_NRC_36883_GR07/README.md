@@ -9,13 +9,15 @@ consola, escritorio, web y móvil. El contrato SOAP (espacio de nombres y operac
 ## Estructura
 | Carpeta | Contenido |
 |---|---|
-| `01. SERVIDOR/WS_EurekaBank_SOAPDOTNET_GR07` | Servidor SOAP (puerto 5081, ruta `/WSEurekaBank`) |
-| `02. CLICON/ClienteConsola` | Cliente de consola (.NET 10) |
-| `02. CLIESC` | `EurekaBankUI.Shared` (interfaz Blazor compartida) y `ClienteEscritorio` (WPF + BlazorWebView) |
-| `02. CLIWEB/ClienteWeb` | Cliente web (Blazor Server, puerto 5090) |
-| `02. CLIMOV/ClienteMovil` | Cliente móvil Android (.NET MAUI Blazor) |
+| `04. SERVIDOR/WS_EurekaBank_SOAPDOTNET_GR07` | Servidor SOAP (puerto 5081, ruta `/WSEurekaBank`) |
+| `04. CLICON/ClienteConsola` | Cliente de consola (.NET 10) |
+| `04. CLIESC` | `EurekaBankUI.Shared` (interfaz Blazor compartida) y `ClienteEscritorio` (WPF + BlazorWebView) |
+| `04. CLIWEB/ClienteWeb` | Cliente web (Blazor Server, puerto 5090) |
+| `04. CLIMOV/ClienteMovil` | Cliente móvil Android (.NET MAUI Blazor) |
 | `03. BDD` | Scripts de SQL Server: tablas y datos iniciales |
-| `04. DOCUMENTACION` | MER (conceptual, lógico y físico) y diagramas UML, todos en Power Designer (+ PNG) |
+| `01. UML` | `01. ERS` (requisitos), `02. ECUD` (casos de uso) y `03. DIAGRAMAS` (casos de uso, actividad, secuencia, clases y arquitectura: Power Designer + PNG) |
+| `02. MER` | Modelo entidad-relación: conceptual, lógico y físico (Power Designer + PNG) |
+| `05. DOCUMENTACION` | Diccionario de datos, manual técnico, manual de usuario, evidencias (capturas) y presentación |
 
 ## Base de datos
 Tablas: `moneda`, `sucursal`, `empleado`, `usuario` (clave con sal + SHA-256), `cliente`, `cuenta`, `tipo_movimiento`,
@@ -29,11 +31,11 @@ Cuentas de ejemplo: `00100001`, `00100002`, `00200001`, `00200002`, `00100003`.
 
 ## Ejecutar
 ```bash
-cd "01. SERVIDOR/WS_EurekaBank_SOAPDOTNET_GR07/WS_EurekaBank_SOAPDOTNET_GR07"
+cd "04. SERVIDOR/WS_EurekaBank_SOAPDOTNET_GR07/WS_EurekaBank_SOAPDOTNET_GR07"
 dotnet run                       # http://localhost:5081/WSEurekaBank?wsdl
-cd "02. CLICON/ClienteConsola" && dotnet run
-cd "02. CLIWEB/ClienteWeb" && dotnet run --no-launch-profile      # http://localhost:5090
-cd "02. CLIESC/ClienteEscritorio" && dotnet run
+cd "04. CLICON/ClienteConsola" && dotnet run
+cd "04. CLIWEB/ClienteWeb" && dotnet run --no-launch-profile      # http://localhost:5090
+cd "04. CLIESC/ClienteEscritorio" && dotnet run
 ```
 Para usar otro servidor: variable `EUREKA_URL` (por ejemplo `http://IP:5081/WSEurekaBank`) o el campo "Servidor" del login.
 Para que otros equipos se conecten: `dotnet run --urls http://0.0.0.0:5081` y abrir el puerto en el firewall.
@@ -45,5 +47,5 @@ Compilar: `dotnet build -f net10.0-android -c Debug -p:EmbedAssembliesIntoApk=tr
 por ejemplo `C:\eub`, por el límite de 260 caracteres de Windows).
 
 ## Archivos en la raíz
-- `EurekaBank_SOAPDOTNET_GR07.sln`: solución de Visual Studio con el servidor, sus pruebas, la consola, la interfaz compartida, el escritorio y la web (el móvil MAUI se abre aparte: `02. CLIMOV/ClienteMovil`).
+- `EurekaBank_SOAPDOTNET_GR07.sln`: solución de Visual Studio con el servidor, sus pruebas, la consola, la interfaz compartida, el escritorio y la web (el móvil MAUI se abre aparte: `04. CLIMOV/ClienteMovil`).
 - `POWER DESIGNER/`: modelos de Power Designer (`MER/*.cdm, *.ldm, *.pdm` y `UML/*.oom`).
