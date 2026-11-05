@@ -43,3 +43,7 @@ APK listo en `documento para leer/guia/EurekaBank_SOAP_DotNet_GR07.apk`. En el l
 `http://IP_DEL_PC:5081/WSEurekaBank` (en el emulador es `10.0.2.2`).
 Compilar: `dotnet build -f net10.0-android -c Debug -p:EmbedAssembliesIntoApk=true` (copiar el proyecto a una ruta corta,
 por ejemplo `C:\eub`, por el límite de 260 caracteres de Windows).
+
+## Archivos en la raíz
+- `EurekaBank_SOAPDOTNET_GR07.sln`: solución de Visual Studio con el servidor, sus pruebas, la consola, la interfaz compartida, el escritorio y la web (el móvil MAUI se abre aparte: `02. CLIMOV/ClienteMovil`).
+- `POWER DESIGNER/`: modelos de Power Designer (`MER/*.cdm, *.ldm, *.pdm` y `UML/*.oom`).
