@@ -140,7 +140,7 @@
 
     private string Clase(int i) => seccion == i ? "activo" : "";
 
-    private static string Titulo(string t) => t.Length == 0 ? t : char.ToUpper(t[0]) + t.Substring(1).ToLowerInvariant().Replace("deposito", "depósito");
+    private static string Titulo(string t) { var s = t.ToLowerInvariant().Replace("deposito", "depósito"); return s.Length == 0 ? s : char.ToUpper(s[0]) + s.Substring(1); }
 
     private async Task Ir(int i)
     {
