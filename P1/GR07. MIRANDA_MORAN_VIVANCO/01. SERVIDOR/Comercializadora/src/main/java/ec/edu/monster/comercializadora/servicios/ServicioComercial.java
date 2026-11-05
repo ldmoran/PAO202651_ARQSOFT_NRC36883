@@ -6,6 +6,7 @@ import ec.edu.monster.comercializadora.banco.DetalleMontoMaximo;
 import ec.edu.monster.comercializadora.banco.EvaluacionCredito;
 import ec.edu.monster.comercializadora.banco.ResultadoCredito;
 import ec.edu.monster.comercializadora.modelos.Factura;
+import ec.edu.monster.comercializadora.modelos.LineaFactura;
 import ec.edu.monster.comercializadora.modelos.ResultadoFactura;
 import ec.edu.monster.comercializadora.modelos.Telefono;
 import ec.edu.monster.comercializadora.repositorios.ComercioRepositorio;
@@ -14,7 +15,9 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /** Casos de uso de la Comercializadora. El descuento por pago en efectivo se calcula aqui, no en los clientes. */
@@ -125,17 +128,30 @@ public class ServicioComercial {
 
     // ---------- Facturacion ----------
 
+    /** Maximo de celulares en una sola venta. */
+    public static final int MAXIMO_CELULARES = 20;
+
     public ResultadoFactura facturarEfectivo(String cedula, String nombre, int codTelefono) {
-        ResultadoFactura invalido = validar(cedula, nombre, codTelefono);
-        if (invalido != null) {
+        return facturarEfectivoVarios(cedula, nombre, List.of(codTelefono));
+    }
+
+    public ResultadoFactura facturarCredito(String cedula, String nombre, int codTelefono, int plazoMeses) {
+        return facturarCreditoVarios(cedula, nombre, List.of(codTelefono), plazoMeses);
+    }
+
+    /** Venta de varios celulares en efectivo: una sola factura; un codigo repetido es una cantidad mayor. */
+    public ResultadoFactura facturarEfectivoVarios(String cedula, String nombre, List<Integer> codigos) {
+        Object r = validar(cedula, nombre, codigos);
+        if (r instanceof ResultadoFactura invalido) {
             return invalido;
         }
+        @SuppressWarnings("unchecked")
+        List<LineaFactura> lineas = (List<LineaFactura>) r;
         try {
-            Telefono t = repositorio.buscarTelefono(codTelefono).get();
-            BigDecimal precio = dinero(t.getPrecio());
+            BigDecimal precio = totalDe(lineas);
             BigDecimal descuento = precio.multiply(DESCUENTO_EFECTIVO).setScale(2, RoundingMode.HALF_UP);
             BigDecimal total = precio.subtract(descuento);
-            int num = repositorio.guardarFactura(cedula.trim(), nombre == null ? "" : nombre.trim(), codTelefono,
+            int num = repositorio.guardarFactura(cedula.trim(), nombre == null ? "" : nombre.trim(), lineas,
                     "EFECTIVO", precio, descuento, total, null, null, LocalDateTime.now(reloj));
             return resultado(num, "Factura emitida. Se aplico el 42 % de descuento por pago en efectivo.");
         } catch (SQLException e) {
@@ -143,14 +159,16 @@ public class ServicioComercial {
         }
     }
 
-    public ResultadoFactura facturarCredito(String cedula, String nombre, int codTelefono, int plazoMeses) {
-        ResultadoFactura invalido = validar(cedula, nombre, codTelefono);
-        if (invalido != null) {
+    /** Venta de varios celulares a credito: el banco evalua el total de la compra y otorga un solo credito. */
+    public ResultadoFactura facturarCreditoVarios(String cedula, String nombre, List<Integer> codigos, int plazoMeses) {
+        Object r = validar(cedula, nombre, codigos);
+        if (r instanceof ResultadoFactura invalido) {
             return invalido;
         }
-        try {
-            Telefono t = repositorio.buscarTelefono(codTelefono).get();
-            BigDecimal precio = dinero(t.getPrecio());
+        @SuppressWarnings("unchecked")
+        List<LineaFactura> lineas = (List<LineaFactura>) r;
+        {
+            BigDecimal precio = totalDe(lineas);
             ResultadoCredito credito;
             try {
                 credito = banco.otorgarCredito(cedula.trim(), precio.doubleValue(), plazoMeses);
@@ -161,7 +179,7 @@ public class ServicioComercial {
                 return new ResultadoFactura(false, credito.getMensaje(), null);
             }
             try {
-                int num = repositorio.guardarFactura(cedula.trim(), nombre == null ? "" : nombre.trim(), codTelefono,
+                int num = repositorio.guardarFactura(cedula.trim(), nombre == null ? "" : nombre.trim(), lineas,
                         "CREDITO", precio, BigDecimal.ZERO.setScale(2), precio, plazoMeses, credito.getCodCredito(),
                         LocalDateTime.now(reloj));
                 return resultado(num, "Factura emitida. Credito " + credito.getCodCredito() + " aprobado por el banco.");
@@ -170,28 +188,57 @@ public class ServicioComercial {
                 throw new ErrorServicio("El banco aprobo el credito " + credito.getCodCredito()
                         + " pero no se pudo guardar la factura", e);
             }
-        } catch (SQLException e) {
-            throw new ErrorServicio("No se pudo emitir la factura", e);
         }
     }
 
-    /** Comprueba cedula, nombre (si el cliente es nuevo) y telefono; devuelve null si todo esta bien. */
-    private ResultadoFactura validar(String cedula, String nombre, int codTelefono) {
+    private static BigDecimal totalDe(List<LineaFactura> lineas) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (LineaFactura l : lineas) {
+            total = total.add(dinero(l.getPrecioUnitario()).multiply(BigDecimal.valueOf(l.getCantidad())));
+        }
+        return total.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Comprueba cedula, nombre (si el cliente es nuevo) y celulares. Devuelve un {@link ResultadoFactura} con el error, o la
+     * lista de lineas (un renglon por modelo, con la cantidad) si todo esta bien.
+     */
+    private Object validar(String cedula, String nombre, List<Integer> codigos) {
         if (vacio(cedula) || !cedula.trim().matches("\\d{10}")) {
             return new ResultadoFactura(false, "La cedula debe tener 10 digitos.", null);
+        }
+        if (codigos == null || codigos.isEmpty()) {
+            return new ResultadoFactura(false, "Elija al menos un celular.", null);
+        }
+        if (codigos.size() > MAXIMO_CELULARES) {
+            return new ResultadoFactura(false, "Maximo " + MAXIMO_CELULARES + " celulares por venta.", null);
         }
         try {
             if (vacio(nombre) && !repositorio.existeCliente(cedula.trim())) {
                 return new ResultadoFactura(false, "Ingrese el nombre del cliente.", null);
             }
-            Optional<Telefono> t = repositorio.buscarTelefono(codTelefono);
-            if (t.isEmpty()) {
-                return new ResultadoFactura(false, "El telefono no existe.", null);
+            Map<Integer, Integer> cantidades = new LinkedHashMap<>();
+            for (Integer c : codigos) {
+                if (c == null) {
+                    return new ResultadoFactura(false, "El telefono no existe.", null);
+                }
+                cantidades.merge(c, 1, Integer::sum);
             }
-            if (!t.get().isDisponible()) {
-                return new ResultadoFactura(false, "El telefono no esta disponible.", null);
+            boolean varios = codigos.size() > 1;
+            List<LineaFactura> lineas = new java.util.ArrayList<>();
+            for (Map.Entry<Integer, Integer> e : cantidades.entrySet()) {
+                Optional<Telefono> t = repositorio.buscarTelefono(e.getKey());
+                if (t.isEmpty()) {
+                    return new ResultadoFactura(false, varios ? "El telefono " + e.getKey() + " no existe." : "El telefono no existe.", null);
+                }
+                if (!t.get().isDisponible()) {
+                    return new ResultadoFactura(false, varios ? "El telefono " + t.get().getMarca() + " " + t.get().getModelo()
+                            + " no esta disponible." : "El telefono no esta disponible.", null);
+                }
+                lineas.add(new LineaFactura(e.getKey(), t.get().getMarca() + " " + t.get().getModelo(), e.getValue(),
+                        dinero(t.get().getPrecio()).doubleValue()));
             }
-            return null;
+            return lineas;
         } catch (SQLException e) {
             throw new ErrorServicio("No se pudo validar la venta", e);
         }

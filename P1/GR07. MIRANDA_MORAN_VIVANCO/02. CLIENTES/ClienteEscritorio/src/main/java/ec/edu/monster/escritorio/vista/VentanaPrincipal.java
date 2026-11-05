@@ -81,6 +81,11 @@ public class VentanaPrincipal extends JFrame {
     private final JTextArea txtFactura = new JTextArea(8, 34);
     private final TablaAmortizacion tablaVenta = new TablaAmortizacion();
     private List<Telefono> disponibles = new ArrayList<>();
+    private final JSpinner spCantidad = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
+    private final DefaultTableModel modeloCarrito = soloLectura("Celular", "Cant.", "Subtotal");
+    private final JTable tablaCarrito = new JTable(modeloCarrito);
+    /** Carrito de la compra: codigo de celular -> cantidad. Todo lo que hay aqui sale en una sola factura. */
+    private final java.util.LinkedHashMap<Integer, Integer> carrito = new java.util.LinkedHashMap<>();
 
     // Credito
     private final JTextField txtCedulaCredito = new JTextField(14);
@@ -530,7 +535,7 @@ public class VentanaPrincipal extends JFrame {
         p.setOpaque(false);
 
         Estilo.Tarjeta formulario = Estilo.tarjeta("Datos de la venta");
-        formulario.setPreferredSize(new Dimension(380, 100));
+        formulario.setPreferredSize(new Dimension(410, 100));
         JPanel f = new JPanel(new GridBagLayout());
         f.setOpaque(false);
         GridBagConstraints g = celda(0, 0);
@@ -543,6 +548,39 @@ public class VentanaPrincipal extends JFrame {
         g = celda(0, 2);
         g.insets = new Insets(2, 0, 8, 0);
         f.add(campo("Celular", cmbTelefono), g);
+        JPanel agregarFila = new JPanel(new BorderLayout(8, 0));
+        agregarFila.setOpaque(false);
+        JPanel cant = new JPanel(new BorderLayout());
+        cant.setOpaque(false);
+        spCantidad.setPreferredSize(new Dimension(74, 38));
+        cant.add(spCantidad, BorderLayout.CENTER);
+        agregarFila.add(campo("Cantidad", cant), BorderLayout.WEST);
+        JButton agregar = Estilo.botonPrimario("Agregar a la compra", Estilo.icono(Estilo.Forma.MAS, 16, Color.WHITE));
+        JPanel zonaAgregar = new JPanel(new BorderLayout());
+        zonaAgregar.setOpaque(false);
+        zonaAgregar.add(agregar, BorderLayout.SOUTH);
+        agregarFila.add(zonaAgregar, BorderLayout.CENTER);
+        g = celda(0, 3);
+        g.insets = new Insets(2, 0, 8, 0);
+        f.add(agregarFila, g);
+
+        Estilo.tabla(tablaCarrito);
+        tablaCarrito.getColumnModel().getColumn(1).setCellRenderer(Estilo.celda(SwingConstants.CENTER));
+        tablaCarrito.getColumnModel().getColumn(1).setMaxWidth(60);
+        tablaCarrito.getColumnModel().getColumn(2).setCellRenderer(Estilo.celda(SwingConstants.RIGHT));
+        JScrollPane scrollCarrito = desplazable(tablaCarrito);
+        scrollCarrito.setPreferredSize(new Dimension(300, 120));
+        JButton quitar = Estilo.botonSecundario("Quitar de la compra", null);
+        JPanel carritoPanel = new JPanel(new BorderLayout(0, 6));
+        carritoPanel.setOpaque(false);
+        carritoPanel.add(Estilo.etiqueta("Celulares de esta compra (una sola factura)"), BorderLayout.NORTH);
+        carritoPanel.add(scrollCarrito, BorderLayout.CENTER);
+        carritoPanel.add(quitar, BorderLayout.SOUTH);
+        g = celda(0, 4);
+        g.insets = new Insets(2, 0, 8, 0);
+        f.add(carritoPanel, g);
+        agregar.addActionListener(e -> agregarAlCarrito());
+        quitar.addActionListener(e -> quitarDelCarrito());
 
         ButtonGroup grupo = new ButtonGroup();
         grupo.add(rbEfectivo);
@@ -563,10 +601,10 @@ public class VentanaPrincipal extends JFrame {
         pago.setOpaque(false);
         pago.add(rbEfectivo);
         pago.add(rbCredito);
-        g = celda(0, 3);
+        g = celda(0, 5);
         g.insets = new Insets(2, 0, 8, 0);
         f.add(campo("Forma de pago", pago), g);
-        g = celda(0, 4);
+        g = celda(0, 6);
         g.insets = new Insets(2, 0, 8, 0);
         f.add(campo("Plazo del crédito (meses)", spPlazo), g);
         spPlazo.setEnabled(false);
@@ -584,18 +622,23 @@ public class VentanaPrincipal extends JFrame {
         lblResumen.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
         lblResumen.setOpaque(true);
         lblResumen.setBackground(Estilo.CELESTE);
-        g = celda(0, 5);
+        g = celda(0, 7);
         g.insets = new Insets(2, 0, 12, 0);
         f.add(lblResumen, g);
         JButton vender = Estilo.botonDorado("Vender", Estilo.icono(Estilo.Forma.CARRITO, 18, Estilo.NAVY));
         vender.setFont(Estilo.fuente(Font.BOLD, 15f));
-        g = celda(0, 6);
+        g = celda(0, 8);
         g.insets = new Insets(2, 0, 0, 0);
         f.add(vender, g);
         JPanel arriba = new JPanel(new BorderLayout());
         arriba.setOpaque(false);
         arriba.add(f, BorderLayout.NORTH);
-        formulario.add(arriba, BorderLayout.CENTER);
+        JScrollPane scrollForm = new JScrollPane(arriba, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollForm.setBorder(BorderFactory.createEmptyBorder());
+        scrollForm.setOpaque(false);
+        scrollForm.getViewport().setOpaque(false);
+        scrollForm.getVerticalScrollBar().setUnitIncrement(16);
+        formulario.add(scrollForm, BorderLayout.CENTER);
         p.add(formulario, BorderLayout.WEST);
 
         JPanel derecha = new JPanel(new BorderLayout(0, 16));
@@ -615,19 +658,28 @@ public class VentanaPrincipal extends JFrame {
         p.add(derecha, BorderLayout.CENTER);
 
         vender.addActionListener(e -> {
-            int i = cmbTelefono.getSelectedIndex();
-            if (i < 0 || i >= disponibles.size()) {
-                error("Elija un celular disponible.");
-                return;
+            java.util.Map<Integer, Integer> compra = new java.util.LinkedHashMap<>(carrito);
+            if (compra.isEmpty()) {
+                int i = cmbTelefono.getSelectedIndex();
+                if (i < 0 || i >= disponibles.size()) {
+                    error("Elija un celular disponible y presione Agregar a la compra.");
+                    return;
+                }
+                compra.put(disponibles.get(i).getCodTelefono(), 1);
             }
-            int cod = disponibles.get(i).getCodTelefono();
+            List<Integer> codigos = new ArrayList<>();
+            compra.forEach((cod, n) -> {
+                for (int k = 0; k < n; k++) {
+                    codigos.add(cod);
+                }
+            });
             String cedula = txtCedulaVenta.getText().trim();
             String nombre = txtNombreVenta.getText().trim();
             boolean credito = rbCredito.isSelected();
             int plazo = (Integer) spPlazo.getValue();
             ctl.ejecutar(() -> {
-                ResultadoFactura r = credito ? ctl.servicio().facturarCredito(cedula, nombre, cod, plazo)
-                        : ctl.servicio().facturarEfectivo(cedula, nombre, cod);
+                ResultadoFactura r = credito ? ctl.servicio().facturarCreditoVarios(cedula, nombre, codigos, plazo)
+                        : ctl.servicio().facturarEfectivoVarios(cedula, nombre, codigos);
                 List<CuotaAmortizacion> cuotas = r.isExito() && credito
                         ? ctl.servicio().obtenerAmortizacion(r.getFactura().getCodCredito())
                         : new ArrayList<CuotaAmortizacion>();
@@ -638,6 +690,8 @@ public class VentanaPrincipal extends JFrame {
                 List<CuotaAmortizacion> cuotas = (List<CuotaAmortizacion>) par[1];
                 if (r.isExito()) {
                     aviso(r.getMensaje());
+                    carrito.clear();
+                    refrescarCarrito();
                 } else {
                     estado.setText(r.getMensaje());
                     punto.poner(Estilo.ORO);
@@ -649,23 +703,88 @@ public class VentanaPrincipal extends JFrame {
         return p;
     }
 
-    private void actualizarResumen() {
+    private void agregarAlCarrito() {
         int i = cmbTelefono.getSelectedIndex();
         if (i < 0 || i >= disponibles.size()) {
+            error("Elija un celular disponible.");
+            return;
+        }
+        int cod = disponibles.get(i).getCodTelefono();
+        carrito.merge(cod, (Integer) spCantidad.getValue(), Integer::sum);
+        spCantidad.setValue(1);
+        refrescarCarrito();
+    }
+
+    private void quitarDelCarrito() {
+        int fila = tablaCarrito.getSelectedRow();
+        if (fila < 0 || fila >= carrito.size()) {
+            error("Elija una fila de la compra para quitarla.");
+            return;
+        }
+        Integer cod = new ArrayList<>(carrito.keySet()).get(fila);
+        carrito.remove(cod);
+        refrescarCarrito();
+    }
+
+    private Telefono telefonoDe(int cod) {
+        for (Telefono t : disponibles) {
+            if (t.getCodTelefono() == cod) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    private void refrescarCarrito() {
+        modeloCarrito.setRowCount(0);
+        carrito.forEach((cod, n) -> {
+            Telefono t = telefonoDe(cod);
+            String nombre = t == null ? "Celular " + cod : t.getMarca() + " " + t.getModelo();
+            modeloCarrito.addRow(new Object[] {nombre, n, Formato.dinero(t == null ? 0 : t.getPrecio() * n)});
+        });
+        actualizarResumen();
+    }
+
+    private double totalCompra() {
+        double total = 0;
+        for (java.util.Map.Entry<Integer, Integer> e : carrito.entrySet()) {
+            Telefono t = telefonoDe(e.getKey());
+            total += t == null ? 0 : t.getPrecio() * e.getValue();
+        }
+        if (carrito.isEmpty()) {
+            int i = cmbTelefono.getSelectedIndex();
+            total = i < 0 || i >= disponibles.size() ? 0 : disponibles.get(i).getPrecio();
+        }
+        return total;
+    }
+
+    private void actualizarResumen() {
+        double precio = totalCompra();
+        if (precio <= 0) {
             lblResumen.setText("Elija un celular para ver el precio");
             return;
         }
-        double precio = disponibles.get(i).getPrecio();
         if (rbCredito.isSelected()) {
-            lblResumen.setText("Precio de lista " + Formato.dinero(precio) + "  ·  el banco decide si lo aprueba");
+            lblResumen.setText("Total de la compra " + Formato.dinero(precio) + "  ·  el banco decide si lo aprueba");
         } else {
-            lblResumen.setText("Lista " + Formato.dinero(precio) + "  →  Efectivo " + Formato.dinero(precio * (1 - DESCUENTO_EFECTIVO)));
+            lblResumen.setText("Total " + Formato.dinero(precio) + "  →  Efectivo " + Formato.dinero(precio * (1 - DESCUENTO_EFECTIVO)));
         }
+    }
+
+    private static String lineasTexto(Factura f) {
+        if (f.getLineas().isEmpty()) {
+            return "Celular:   " + f.getTelefono() + "\n";
+        }
+        StringBuilder sb = new StringBuilder("Celulares:\n");
+        for (ec.edu.monster.cliente.modelos.LineaFactura l : f.getLineas()) {
+            sb.append(String.format("  %2d x %-22s %10s%n", l.getCantidad(), l.getDescripcion(), Formato.dinero(l.getSubtotal())));
+        }
+        return sb.toString().replace("\r", "");
     }
 
     private static String textoFactura(Factura f) {
         return "FACTURA N. " + f.getNumFactura() + "\nFecha:     " + f.getFecha() + "\nCliente:   " + f.getNombreCliente()
-                + " (" + f.getCedula() + ")\nCelular:   " + f.getTelefono() + "\nPago:      " + f.getFormaPago()
+                + " (" + f.getCedula() + ")\n" + lineasTexto(f) + "Pago:      " + f.getFormaPago()
                 + (f.getNumCuotas() > 0 ? " a " + f.getNumCuotas() + " cuotas (crédito " + f.getCodCredito() + ")" : "")
                 + "\nPrecio:    " + Formato.dinero(f.getPrecioLista()) + "\nDescuento: " + Formato.dinero(f.getDescuento())
                 + "\nTOTAL:     " + Formato.dinero(f.getTotal());

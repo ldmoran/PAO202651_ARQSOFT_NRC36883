@@ -91,7 +91,15 @@ public class VistaConsola {
         salida.println("---------------- FACTURA " + f.getNumFactura() + " ----------------");
         salida.println("Fecha:    " + f.getFecha());
         salida.println("Cliente:  " + f.getNombreCliente() + " (" + f.getCedula() + ")");
-        salida.println("Celular:  " + f.getTelefono());
+        if (f.getLineas().isEmpty()) {
+            salida.println("Celular:  " + f.getTelefono());
+        } else {
+            salida.println("Celulares:");
+            for (ec.edu.monster.cliente.modelos.LineaFactura l : f.getLineas()) {
+                salida.println(String.format("  %2d x %-24s %10s %10s", l.getCantidad(), l.getDescripcion(),
+                        Formato.dinero(l.getPrecioUnitario()), Formato.dinero(l.getSubtotal())));
+            }
+        }
         salida.println("Pago:     " + f.getFormaPago()
                 + (f.getNumCuotas() > 0 ? " a " + f.getNumCuotas() + " cuotas (credito " + f.getCodCredito() + ")" : ""));
         salida.println("Precio:   " + Formato.dinero(f.getPrecioLista()));

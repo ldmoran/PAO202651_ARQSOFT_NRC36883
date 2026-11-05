@@ -1,6 +1,9 @@
 package ec.edu.monster.comercializadora.modelos;
 
-/** Factura de venta de un celular. Viaja por SOAP. */
+import java.util.ArrayList;
+import java.util.List;
+
+/** Factura de venta de uno o varios celulares. Viaja por SOAP. */
 public class Factura {
 
     private int numFactura;
@@ -15,6 +18,7 @@ public class Factura {
     private double total;
     private int numCuotas;
     private int codCredito;
+    private List<LineaFactura> lineas = new ArrayList<>();
 
     public Factura() {
     }
@@ -117,5 +121,14 @@ public class Factura {
 
     public void setCodCredito(int codCredito) {
         this.codCredito = codCredito;
+    }
+
+    /** Detalle de la factura: un renglon por modelo, con su cantidad. */
+    public List<LineaFactura> getLineas() {
+        return lineas;
+    }
+
+    public void setLineas(List<LineaFactura> lineas) {
+        this.lineas = lineas;
     }
 }

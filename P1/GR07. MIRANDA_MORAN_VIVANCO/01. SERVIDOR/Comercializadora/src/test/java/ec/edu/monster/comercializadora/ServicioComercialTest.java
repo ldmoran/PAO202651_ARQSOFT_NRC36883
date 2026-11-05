@@ -86,6 +86,8 @@ class ServicioComercialTest {
             st.execute("CREATE TABLE FACTURA (NUM_FACTURA INT AUTO_INCREMENT PRIMARY KEY, FECHA TIMESTAMP, COD_CLIENTE INT, "
                     + "COD_TELEFONO INT, FORMA_PAGO VARCHAR(10), PRECIO_LISTA DECIMAL(10,2), DESCUENTO DECIMAL(10,2), "
                     + "TOTAL DECIMAL(10,2), NUM_CUOTAS INT NULL, COD_CREDITO INT NULL)");
+            st.execute("CREATE TABLE DETALLE_FACTURA (NUM_FACTURA INT, NUM_LINEA INT, COD_TELEFONO INT, CANTIDAD INT, "
+                    + "PRECIO_UNITARIO DECIMAL(10,2), PRIMARY KEY (NUM_FACTURA, NUM_LINEA))");
             st.execute("INSERT INTO TELEFONO (MARCA, MODELO, PRECIO) VALUES ('Samsung','A15',200.00)");
             st.execute("INSERT INTO TELEFONO (MARCA, MODELO, PRECIO) VALUES ('Apple','iPhone 15',899.00)");
             st.execute("INSERT INTO TELEFONO (MARCA, MODELO, PRECIO, DISPONIBLE) VALUES ('Viejo','Modelo',50.00, FALSE)");
@@ -178,5 +180,65 @@ class ServicioComercialTest {
         servicio.facturarEfectivo("1712345601", "Carlos", 1);
         assertTrue(servicio.eliminarTelefono(1));
         assertFalse(servicio.buscarTelefono(1).isDisponible());
+    }
+
+    // ---------- varios celulares en una sola venta ----------
+
+    @Test
+    void variosCelularesEnEfectivoGeneranUnaSolaFacturaConDescuento() {
+        ResultadoFactura r = servicio.facturarEfectivoVarios("1712345601", "Carlos", List.of(1, 2));
+        assertTrue(r.isExito(), r.getMensaje());
+        assertEquals(1099.00, r.getFactura().getPrecioLista(), 0.0);          // 200 + 899
+        assertEquals(461.58, r.getFactura().getDescuento(), 0.0);             // 42 %
+        assertEquals(637.42, r.getFactura().getTotal(), 0.0);
+        assertEquals(2, r.getFactura().getLineas().size());
+        assertEquals(1, servicio.consultarFacturas("1712345601").size());     // una sola factura
+        assertEquals("Samsung A15, Apple iPhone 15", r.getFactura().getTelefono());
+    }
+
+    @Test
+    void codigoRepetidoEsUnaCantidadMayor() {
+        ResultadoFactura r = servicio.facturarEfectivoVarios("1712345601", "Carlos", List.of(1, 1, 1));
+        assertTrue(r.isExito(), r.getMensaje());
+        assertEquals(1, r.getFactura().getLineas().size());
+        assertEquals(3, r.getFactura().getLineas().get(0).getCantidad());
+        assertEquals(600.00, r.getFactura().getPrecioLista(), 0.0);
+        assertEquals("Samsung A15 x3", r.getFactura().getTelefono());
+    }
+
+    @Test
+    void variosCelularesACreditoPiden_AlBancoElTotalYGuardanUnSoloCredito() {
+        banco.maximo = 1500;
+        ResultadoFactura r = servicio.facturarCreditoVarios("1712345601", "Carlos", List.of(1, 2), 6);
+        assertTrue(r.isExito(), r.getMensaje());
+        assertEquals(1099.00, r.getFactura().getTotal(), 0.0);
+        assertEquals(1, banco.llamadasOtorgar);                               // un solo credito por el total
+        assertEquals(6, r.getFactura().getNumCuotas());
+    }
+
+    @Test
+    void creditoDeVariosCelularesSeRechazaSiElTotalSuperaElMaximo() {
+        banco.maximo = 500;
+        ResultadoFactura r = servicio.facturarCreditoVarios("1712345601", "Carlos", List.of(1, 2), 6);   // total 1099
+        assertFalse(r.isExito());
+        assertNull(r.getFactura());
+        assertEquals(0, servicio.consultarFacturas("1712345601").size());
+    }
+
+    @Test
+    void validaLaListaDeCelulares() {
+        assertFalse(servicio.facturarEfectivoVarios("1712345601", "Carlos", List.of()).isExito());
+        assertFalse(servicio.facturarEfectivoVarios("1712345601", "Carlos", List.of(1, 99)).isExito());   // 99 no existe
+        assertFalse(servicio.facturarEfectivoVarios("1712345601", "Carlos", List.of(1, 3)).isExito());    // 3 no disponible
+        assertEquals("Maximo 20 celulares por venta.",
+                servicio.facturarEfectivoVarios("1712345601", "Carlos", java.util.Collections.nCopies(21, 1)).getMensaje());
+        assertEquals(0, servicio.consultarFacturas("1712345601").size());
+    }
+
+    @Test
+    void laVentaDeUnSoloCelularSigueIgualYGuardaSuLinea() {
+        ResultadoFactura r = servicio.facturarEfectivo("1712345601", "Carlos", 2);
+        assertEquals(1, r.getFactura().getLineas().size());
+        assertEquals("Apple iPhone 15", r.getFactura().getTelefono());
     }
 }

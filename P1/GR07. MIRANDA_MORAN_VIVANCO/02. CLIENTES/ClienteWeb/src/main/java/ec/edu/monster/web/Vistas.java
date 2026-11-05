@@ -119,20 +119,22 @@ public final class Vistas {
 
     // ---------- Venta ----------
 
-    public static String venta(List<Telefono> telefonos, String cedula, String nombre, int codElegido, boolean credito, int plazo,
-            String facturaHtml, String amortHtml) {
+    public static String venta(List<Telefono> telefonos, String cedula, String nombre, java.util.Map<Integer, Integer> cantidades,
+            boolean credito, int plazo, String facturaHtml, String amortHtml) {
         StringBuilder sb = new StringBuilder("<form method=\"post\" class=\"form-venta\">");
         sb.append("<label>Cédula del cliente<input name=\"cedula\" maxlength=\"10\" value=\"").append(e(cedula)).append("\" required></label>")
-                .append("<label>Nombre (solo si es cliente nuevo)<input name=\"nombre\" value=\"").append(e(nombre))
-                .append("\"></label><label>Celular<select name=\"cod\">");
+                .append("<label>Nombre (solo si es cliente nuevo)<input name=\"nombre\" value=\"").append(e(nombre)).append("\"></label>")
+                .append("<span class=\"etiqueta\">Celulares de esta compra (una sola factura): escriba la cantidad de cada uno</span>")
+                .append("<div class=\"tabla-caja compra\"><table><thead><tr><th>Celular</th><th class=\"der\">Precio</th><th class=\"der\">Cantidad</th></tr></thead><tbody>");
         for (Telefono t : telefonos) {
             if (t.isDisponible()) {
-                sb.append("<option value=\"").append(t.getCodTelefono()).append("\"")
-                        .append(t.getCodTelefono() == codElegido ? " selected" : "").append('>').append(e(t.getMarca())).append(' ')
-                        .append(e(t.getModelo())).append(" · ").append(Formato.dinero(t.getPrecio())).append("</option>");
+                int n = cantidades.getOrDefault(t.getCodTelefono(), 0);
+                sb.append("<tr><td>").append(e(t.getMarca())).append(' ').append(e(t.getModelo())).append("</td><td class=\"der\">")
+                        .append(Formato.dinero(t.getPrecio())).append("</td><td class=\"der\"><input class=\"cant\" type=\"number\" min=\"0\" max=\"20\" name=\"cant_")
+                        .append(t.getCodTelefono()).append("\" value=\"").append(n).append("\"></td></tr>");
             }
         }
-        sb.append("</select></label><span class=\"etiqueta\">Forma de pago</span><div class=\"toggle\">")
+        sb.append("</tbody></table></div><span class=\"etiqueta\">Forma de pago</span><div class=\"toggle\">")
                 .append("<input type=\"radio\" id=\"fe\" name=\"forma\" value=\"efectivo\"").append(credito ? "" : " checked")
                 .append("><label for=\"fe\">Efectivo · −42 %</label>")
                 .append("<input type=\"radio\" id=\"fc\" name=\"forma\" value=\"credito\"").append(credito ? " checked" : "")
@@ -150,11 +152,24 @@ public final class Vistas {
         return "<div class=\"factura\"><div class=\"cab\"><strong>Factura N.º " + f.getNumFactura() + "</strong><span class=\"chip "
                 + ("CREDITO".equalsIgnoreCase(f.getFormaPago()) ? "az" : "ok") + "\">" + e(f.getFormaPago()) + "</span></div>"
                 + "<small>" + e(f.getFecha()) + "</small><hr>"
-                + "<p>" + e(f.getNombreCliente()) + " (" + e(f.getCedula()) + ")<br>" + e(f.getTelefono())
-                + (f.getNumCuotas() > 0 ? " · " + f.getNumCuotas() + " cuotas (crédito " + f.getCodCredito() + ")" : "") + "</p>"
+                + "<p>" + e(f.getNombreCliente()) + " (" + e(f.getCedula()) + ")"
+                + (f.getNumCuotas() > 0 ? "<br>" + f.getNumCuotas() + " cuotas (crédito " + f.getCodCredito() + ")" : "") + "</p>"
+                + lineasHtml(f)
                 + "<div class=\"par\"><span>Precio de lista</span><span>" + Formato.dinero(f.getPrecioLista()) + "</span></div>"
                 + "<div class=\"par\"><span>Descuento</span><span>− " + Formato.dinero(f.getDescuento()) + "</span></div>"
                 + "<div class=\"par total\"><span>TOTAL</span><span>" + Formato.dinero(f.getTotal()) + "</span></div></div>";
+    }
+
+    private static String lineasHtml(Factura f) {
+        if (f.getLineas().isEmpty()) {
+            return "<p>" + e(f.getTelefono()) + "</p>";
+        }
+        StringBuilder sb = new StringBuilder("<div class=\"lineas\">");
+        for (ec.edu.monster.cliente.modelos.LineaFactura l : f.getLineas()) {
+            sb.append("<div class=\"par\"><span>").append(l.getCantidad()).append(" × ").append(e(l.getDescripcion()))
+                    .append("</span><span>").append(Formato.dinero(l.getSubtotal())).append("</span></div>");
+        }
+        return sb.append("</div>").toString();
     }
 
     public static String amortizacion(List<CuotaAmortizacion> filas) {

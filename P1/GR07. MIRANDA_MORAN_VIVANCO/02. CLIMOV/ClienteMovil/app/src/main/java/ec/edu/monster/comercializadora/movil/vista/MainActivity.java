@@ -31,6 +31,7 @@ import ec.edu.monster.comercializadora.movil.modelo.CuotaAmortizacion;
 import ec.edu.monster.comercializadora.movil.modelo.DetalleMontoMaximo;
 import ec.edu.monster.comercializadora.movil.modelo.EvaluacionCredito;
 import ec.edu.monster.comercializadora.movil.modelo.Factura;
+import ec.edu.monster.comercializadora.movil.modelo.LineaFactura;
 import ec.edu.monster.comercializadora.movil.modelo.Formato;
 import ec.edu.monster.comercializadora.movil.modelo.ResultadoFactura;
 import ec.edu.monster.comercializadora.movil.modelo.Telefono;
@@ -301,7 +302,6 @@ public class MainActivity extends Activity {
         EditText cedula = campo("Cédula (10 dígitos)");
         cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
         EditText nombre = campo("Nombre (solo si es cliente nuevo)");
-        Spinner combo = new Spinner(this);
         RadioGroup forma = new RadioGroup(this);
         RadioButton efectivo = new RadioButton(this);
         efectivo.setText("Efectivo (42 % de descuento)");
@@ -320,32 +320,63 @@ public class MainActivity extends Activity {
 
         contenido.addView(cedula);
         contenido.addView(nombre);
-        contenido.addView(combo);
+        TextView ayuda = texto("Celulares de esta compra (una sola factura): escriba la cantidad de cada uno", true);
+        ayuda.setTextSize(13);
+        ayuda.setTextColor(GRIS);
+        ayuda.setPadding(0, dp(14), 0, dp(4));
+        contenido.addView(ayuda);
+        LinearLayout listaCompra = tarjeta();
+        contenido.addView(listaCompra);
         contenido.addView(forma);
         contenido.addView(plazo);
         Button vender = boton("Vender", null);
+        vender.setBackground(fondo(ORO, 10, 0));
+        vender.setTextColor(NAVY);
         contenido.addView(vender);
         contenido.addView(resultado);
 
         List<Telefono> disponibles = new ArrayList<>();
+        List<EditText> cantidades = new ArrayList<>();
         ctl.ejecutar(() -> ctl.servicio().listarTelefonos(), lista -> {
-            List<String> etiquetas = new ArrayList<>();
             for (Telefono t : lista) {
-                if (t.isDisponible()) {
-                    disponibles.add(t);
-                    etiquetas.add(t.getMarca() + " " + t.getModelo() + " - " + Formato.dinero(t.getPrecio()));
+                if (!t.isDisponible()) {
+                    continue;
                 }
+                disponibles.add(t);
+                LinearLayout fila = new LinearLayout(this);
+                fila.setGravity(Gravity.CENTER_VERTICAL);
+                fila.setPadding(0, dp(4), 0, dp(4));
+                LinearLayout datos = new LinearLayout(this);
+                datos.setOrientation(LinearLayout.VERTICAL);
+                datos.addView(texto(t.getMarca() + " " + t.getModelo(), true));
+                TextView pr = texto(Formato.dinero(t.getPrecio()), false);
+                pr.setTextColor(AZUL);
+                datos.addView(pr);
+                fila.addView(datos, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                EditText n = new EditText(this);
+                n.setInputType(InputType.TYPE_CLASS_NUMBER);
+                n.setText("0");
+                n.setGravity(Gravity.CENTER);
+                n.setSelectAllOnFocus(true);
+                n.setBackground(fondo(Color.WHITE, 10, BORDE));
+                cantidades.add(n);
+                fila.addView(n, new LinearLayout.LayoutParams(dp(70), dp(44)));
+                listaCompra.addView(fila);
             }
-            combo.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, etiquetas));
         }, m -> estado(m, true));
 
         vender.setOnClickListener(v -> {
-            int i = combo.getSelectedItemPosition();
-            if (i < 0 || i >= disponibles.size()) {
-                estado("Elija un celular disponible.", true);
+            List<Integer> codigos = new ArrayList<>();
+            for (int i = 0; i < disponibles.size(); i++) {
+                Integer n = entero(cantidades.get(i).getText().toString());
+                for (int k = 0; n != null && k < Math.min(n, 20); k++) {
+                    codigos.add(disponibles.get(i).getCodTelefono());
+                }
+            }
+            if (codigos.isEmpty()) {
+                estado("Escriba la cantidad de al menos un celular.", true);
                 return;
             }
-            int cod = disponibles.get(i).getCodTelefono();
             String ced = cedula.getText().toString().trim();
             String nom = nombre.getText().toString().trim();
             boolean aCredito = credito.isChecked();
@@ -356,8 +387,8 @@ public class MainActivity extends Activity {
             }
             estado("Procesando...", false);
             ctl.ejecutar(() -> {
-                ResultadoFactura r = aCredito ? ctl.servicio().facturarCredito(ced, nom, cod, meses)
-                        : ctl.servicio().facturarEfectivo(ced, nom, cod);
+                ResultadoFactura r = aCredito ? ctl.servicio().facturarCreditoVarios(ced, nom, codigos, meses)
+                        : ctl.servicio().facturarEfectivoVarios(ced, nom, codigos);
                 List<CuotaAmortizacion> cuotas = r.isExito() && aCredito
                         ? ctl.servicio().obtenerAmortizacion(r.getFactura().getCodCredito()) : new ArrayList<>();
                 return new Object[] {r, cuotas};
@@ -368,6 +399,9 @@ public class MainActivity extends Activity {
                 resultado.removeAllViews();
                 estado(r.getMensaje(), !r.isExito());
                 if (r.isExito() && r.getFactura() != null) {
+                    for (EditText n : cantidades) {
+                        n.setText("0");
+                    }
                     resultado.addView(tarjetaFactura(r.getFactura()));
                     if (!cuotas.isEmpty()) {
                         resultado.addView(tablaAmortizacion(cuotas));
@@ -469,7 +503,16 @@ public class MainActivity extends Activity {
         t.addView(fecha);
         t.addView(separador());
         t.addView(texto(f.getNombreCliente() + " (" + f.getCedula() + ")", false));
-        t.addView(texto(f.getTelefono() + (f.getNumCuotas() > 0 ? " · " + f.getNumCuotas() + " cuotas" : ""), false));
+        if (f.getLineas().isEmpty()) {
+            t.addView(texto(f.getTelefono(), false));
+        } else {
+            for (LineaFactura l : f.getLineas()) {
+                t.addView(fila2(l.getCantidad() + " × " + l.getDescripcion(), Formato.dinero(l.getSubtotal())));
+            }
+        }
+        if (f.getNumCuotas() > 0) {
+            t.addView(texto(f.getNumCuotas() + " cuotas", false));
+        }
         t.addView(fila2("Precio de lista", Formato.dinero(f.getPrecioLista())));
         t.addView(fila2("Descuento", "- " + Formato.dinero(f.getDescuento())));
         LinearLayout total = fila2("TOTAL", Formato.dinero(f.getTotal()));

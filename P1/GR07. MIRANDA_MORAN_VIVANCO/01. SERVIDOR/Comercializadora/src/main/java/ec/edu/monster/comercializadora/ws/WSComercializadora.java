@@ -82,6 +82,21 @@ public class WSComercializadora {
         return servicio.facturarCredito(cedula, nombre, codTelefono, plazoMeses);
     }
 
+    /** Venta de varios celulares en efectivo. Un codigo repetido es una cantidad mayor de ese modelo. */
+    @WebMethod(operationName = "facturarEfectivoVarios")
+    public ResultadoFactura facturarEfectivoVarios(@WebParam(name = "cedula") String cedula,
+            @WebParam(name = "nombre") String nombre, @WebParam(name = "codTelefonos") List<Integer> codTelefonos) {
+        return servicio.facturarEfectivoVarios(cedula, nombre, codTelefonos);
+    }
+
+    /** Venta de varios celulares a credito: el banco evalua el total y otorga un solo credito. */
+    @WebMethod(operationName = "facturarCreditoVarios")
+    public ResultadoFactura facturarCreditoVarios(@WebParam(name = "cedula") String cedula,
+            @WebParam(name = "nombre") String nombre, @WebParam(name = "codTelefonos") List<Integer> codTelefonos,
+            @WebParam(name = "plazoMeses") int plazoMeses) {
+        return servicio.facturarCreditoVarios(cedula, nombre, codTelefonos, plazoMeses);
+    }
+
     @WebMethod(operationName = "consultarFacturas")
     public List<Factura> consultarFacturas(@WebParam(name = "cedula") String cedula) {
         return servicio.consultarFacturas(cedula);

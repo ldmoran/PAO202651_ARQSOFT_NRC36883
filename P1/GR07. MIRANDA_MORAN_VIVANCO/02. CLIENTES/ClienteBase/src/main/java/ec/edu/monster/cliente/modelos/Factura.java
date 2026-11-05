@@ -1,5 +1,8 @@
 package ec.edu.monster.cliente.modelos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** Factura de venta de un celular. Viaja por SOAP. */
 public class Factura {
 
@@ -15,6 +18,7 @@ public class Factura {
     private double total;
     private int numCuotas;
     private int codCredito;
+    private List<LineaFactura> lineas = new ArrayList<>();
 
     public Factura() {
     }
@@ -117,5 +121,14 @@ public class Factura {
 
     public void setCodCredito(int codCredito) {
         this.codCredito = codCredito;
+    }
+
+    /** Detalle de la factura: un renglon por modelo, con su cantidad. */
+    public List<LineaFactura> getLineas() {
+        return lineas;
+    }
+
+    public void setLineas(List<LineaFactura> lineas) {
+        this.lineas = lineas;
     }
 }

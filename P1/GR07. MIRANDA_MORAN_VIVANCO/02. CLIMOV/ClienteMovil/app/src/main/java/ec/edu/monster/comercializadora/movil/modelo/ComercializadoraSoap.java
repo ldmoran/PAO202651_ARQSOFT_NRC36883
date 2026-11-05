@@ -124,6 +124,26 @@ public class ComercializadoraSoap {
                 + "</nombre><codTelefono>" + codTelefono + "</codTelefono><plazoMeses>" + plazoMeses + "</plazoMeses>"));
     }
 
+    /** Venta de varios celulares en efectivo: una sola factura. Un codigo repetido es una cantidad mayor. */
+    public ResultadoFactura facturarEfectivoVarios(String cedula, String nombre, List<Integer> codTelefonos) {
+        return resultadoFactura(llamar("facturarEfectivoVarios", "<cedula>" + esc(cedula) + "</cedula><nombre>" + esc(nombre)
+                + "</nombre>" + codigos(codTelefonos)));
+    }
+
+    /** Venta de varios celulares a credito: el banco evalua el total y otorga un solo credito. */
+    public ResultadoFactura facturarCreditoVarios(String cedula, String nombre, List<Integer> codTelefonos, int plazoMeses) {
+        return resultadoFactura(llamar("facturarCreditoVarios", "<cedula>" + esc(cedula) + "</cedula><nombre>" + esc(nombre)
+                + "</nombre>" + codigos(codTelefonos) + "<plazoMeses>" + plazoMeses + "</plazoMeses>"));
+    }
+
+    private static String codigos(List<Integer> codTelefonos) {
+        StringBuilder sb = new StringBuilder();
+        for (Integer c : codTelefonos) {
+            sb.append("<codTelefonos>").append(c).append("</codTelefonos>");
+        }
+        return sb.toString();
+    }
+
     public List<Factura> consultarFacturas(String cedula) {
         List<Factura> lista = new ArrayList<>();
         for (Element f : retornos(llamar("consultarFacturas", "<cedula>" + esc(cedula) + "</cedula>"))) {
@@ -153,6 +173,15 @@ public class ComercializadoraSoap {
         f.setTotal(decimal(texto(e, "total")));
         f.setNumCuotas(entero(texto(e, "numCuotas")));
         f.setCodCredito(entero(texto(e, "codCredito")));
+        List<LineaFactura> lineas = new ArrayList<>();
+        for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
+            if (n instanceof Element && "lineas".equals(nombre(n))) {
+                Element l = (Element) n;
+                lineas.add(new LineaFactura(entero(texto(l, "codTelefono")), texto(l, "descripcion"), entero(texto(l, "cantidad")),
+                        decimal(texto(l, "precioUnitario")), decimal(texto(l, "subtotal"))));
+            }
+        }
+        f.setLineas(lineas);
         return f;
     }
 

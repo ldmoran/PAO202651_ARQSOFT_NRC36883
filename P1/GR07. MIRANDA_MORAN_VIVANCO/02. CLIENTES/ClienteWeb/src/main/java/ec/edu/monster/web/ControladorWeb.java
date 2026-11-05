@@ -110,20 +110,31 @@ public class ControladorWeb extends HttpServlet {
     private String venta(HttpServletRequest req, String ruta, boolean post) {
         var telefonos = servicio.listarTelefonos();
         if (!post) {
-            return Vistas.pagina(ruta, "Venta", null, false, Vistas.venta(telefonos, "", "", 0, false, 6, "", ""));
+            return Vistas.pagina(ruta, "Venta", null, false, Vistas.venta(telefonos, "", "", new java.util.HashMap<>(), false, 6, "", ""));
         }
         String cedula = param(req, "cedula");
         String nombre = param(req, "nombre");
-        Integer cod = entero(param(req, "cod"));
         Integer plazo = entero(param(req, "plazo"));
         boolean credito = "credito".equals(param(req, "forma"));
         int plazoMostrado = plazo == null ? 6 : plazo;
-        if (cod == null || (credito && plazo == null)) {
-            return Vistas.pagina(ruta, "Venta", "Datos incompletos.", true,
-                    Vistas.venta(telefonos, cedula, nombre, cod == null ? 0 : cod, credito, plazoMostrado, "", ""));
+        // cada celular tiene su cantidad; un codigo repetido en la lista es una unidad mas
+        java.util.Map<Integer, Integer> cantidades = new java.util.LinkedHashMap<>();
+        java.util.List<Integer> codigos = new java.util.ArrayList<>();
+        for (ec.edu.monster.cliente.modelos.Telefono t : telefonos) {
+            Integer n = entero(param(req, "cant_" + t.getCodTelefono()));
+            if (n != null && n > 0) {
+                cantidades.put(t.getCodTelefono(), n);
+                for (int k = 0; k < n; k++) {
+                    codigos.add(t.getCodTelefono());
+                }
+            }
         }
-        ResultadoFactura r = credito ? servicio.facturarCredito(cedula, nombre, cod, plazo)
-                : servicio.facturarEfectivo(cedula, nombre, cod);
+        if (codigos.isEmpty() || (credito && plazo == null)) {
+            return Vistas.pagina(ruta, "Venta", codigos.isEmpty() ? "Escriba la cantidad de al menos un celular." : "Datos incompletos.", true,
+                    Vistas.venta(telefonos, cedula, nombre, cantidades, credito, plazoMostrado, "", ""));
+        }
+        ResultadoFactura r = credito ? servicio.facturarCreditoVarios(cedula, nombre, codigos, plazo)
+                : servicio.facturarEfectivoVarios(cedula, nombre, codigos);
         String factura = "";
         String amort = "";
         if (r.isExito() && r.getFactura() != null) {
@@ -133,7 +144,7 @@ public class ControladorWeb extends HttpServlet {
             }
         }
         return Vistas.pagina(ruta, "Venta", r.getMensaje(), !r.isExito(),
-                Vistas.venta(telefonos, cedula, nombre, cod, credito, plazoMostrado, factura, amort));
+                Vistas.venta(telefonos, cedula, nombre, r.isExito() ? new java.util.HashMap<>() : cantidades, credito, plazoMostrado, factura, amort));
     }
 
     private String credito(HttpServletRequest req, String ruta, boolean post) {

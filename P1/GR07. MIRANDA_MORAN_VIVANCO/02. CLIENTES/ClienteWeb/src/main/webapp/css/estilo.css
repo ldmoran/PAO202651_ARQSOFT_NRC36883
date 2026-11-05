@@ -96,3 +96,7 @@ td input { padding: .4rem .6rem; }
   .dos { grid-template-columns: 1fr; }
   .cabecera, .cuerpo, .estado { padding-left: 14px; padding-right: 14px; }
 }
+
+.compra table td { padding: 6px 12px; }
+.cant { width: 76px; text-align: right; padding: .35rem .5rem; }
+.lineas { margin: 4px 0 10px; }

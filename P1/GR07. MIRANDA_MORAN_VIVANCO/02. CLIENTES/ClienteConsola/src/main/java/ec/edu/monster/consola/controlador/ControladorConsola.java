@@ -101,9 +101,20 @@ public class ControladorConsola {
     private void vender(boolean aCredito) {
         String cedula = vista.pedir("Cedula del cliente");
         String nombre = vista.pedir("Nombre (solo si es cliente nuevo)");
-        Integer cod = vista.pedirEntero("Codigo del celular");
-        if (cedula == null || nombre == null || cod == null) {
+        vista.mensaje("Celulares de esta compra: escriba los codigos separados por coma. Un codigo repetido son mas unidades "
+                + "(por ejemplo 1,1,3 = dos del 1 y uno del 3). Todo sale en una sola factura.");
+        String lista = vista.pedir("Codigos de los celulares");
+        if (cedula == null || nombre == null || lista == null) {
             return;
+        }
+        java.util.List<Integer> codigos = new java.util.ArrayList<>();
+        for (String parte : lista.split(",")) {
+            try {
+                codigos.add(Integer.valueOf(parte.trim()));
+            } catch (NumberFormatException e) {
+                vista.mensaje("Los codigos deben ser numeros separados por coma.");
+                return;
+            }
         }
         ResultadoFactura r;
         if (aCredito) {
@@ -111,9 +122,9 @@ public class ControladorConsola {
             if (plazo == null) {
                 return;
             }
-            r = servicio.facturarCredito(cedula, nombre, cod, plazo);
+            r = servicio.facturarCreditoVarios(cedula, nombre, codigos, plazo);
         } else {
-            r = servicio.facturarEfectivo(cedula, nombre, cod);
+            r = servicio.facturarEfectivoVarios(cedula, nombre, codigos);
         }
         vista.mensaje(r.getMensaje());
         if (r.isExito() && r.getFactura() != null) {

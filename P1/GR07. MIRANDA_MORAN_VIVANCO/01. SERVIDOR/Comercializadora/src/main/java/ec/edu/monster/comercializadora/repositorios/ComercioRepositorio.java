@@ -2,6 +2,7 @@ package ec.edu.monster.comercializadora.repositorios;
 
 import ec.edu.monster.comercializadora.db.FuenteDatos;
 import ec.edu.monster.comercializadora.modelos.Factura;
+import ec.edu.monster.comercializadora.modelos.LineaFactura;
 import ec.edu.monster.comercializadora.modelos.Telefono;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -138,8 +139,16 @@ public class ComercioRepositorio {
         }
     }
 
-    /** Guarda la factura (creando el cliente si hace falta) y devuelve su numero. */
+    /** Guarda una factura de un solo celular (una linea). */
     public int guardarFactura(String cedula, String nombre, int codTelefono, String formaPago, BigDecimal precioLista,
+            BigDecimal descuento, BigDecimal total, Integer numCuotas, Integer codCredito, LocalDateTime fecha)
+            throws SQLException {
+        return guardarFactura(cedula, nombre, List.of(new LineaFactura(codTelefono, "", 1, precioLista.doubleValue())), formaPago,
+                precioLista, descuento, total, numCuotas, codCredito, fecha);
+    }
+
+    /** Guarda la factura con todas sus lineas (creando el cliente si hace falta) y devuelve su numero. */
+    public int guardarFactura(String cedula, String nombre, List<LineaFactura> lineas, String formaPago, BigDecimal precioLista,
             BigDecimal descuento, BigDecimal total, Integer numCuotas, Integer codCredito, LocalDateTime fecha)
             throws SQLException {
         try (Connection cn = fuente.obtenerConexion()) {
@@ -152,7 +161,7 @@ public class ComercioRepositorio {
                         Statement.RETURN_GENERATED_KEYS)) {
                     ps.setTimestamp(1, Timestamp.valueOf(fecha));
                     ps.setInt(2, codCliente);
-                    ps.setInt(3, codTelefono);
+                    ps.setInt(3, lineas.get(0).getCodTelefono());
                     ps.setString(4, formaPago);
                     ps.setBigDecimal(5, precioLista);
                     ps.setBigDecimal(6, descuento);
@@ -163,6 +172,18 @@ public class ComercioRepositorio {
                     try (ResultSet rs = ps.getGeneratedKeys()) {
                         rs.next();
                         num = rs.getInt(1);
+                    }
+                }
+                int n = 1;
+                for (LineaFactura l : lineas) {
+                    try (PreparedStatement ps = cn.prepareStatement("INSERT INTO DETALLE_FACTURA (NUM_FACTURA, NUM_LINEA, "
+                            + "COD_TELEFONO, CANTIDAD, PRECIO_UNITARIO) VALUES (?,?,?,?,?)")) {
+                        ps.setInt(1, num);
+                        ps.setInt(2, n++);
+                        ps.setInt(3, l.getCodTelefono());
+                        ps.setInt(4, l.getCantidad());
+                        ps.setBigDecimal(5, BigDecimal.valueOf(l.getPrecioUnitario()).setScale(2, java.math.RoundingMode.HALF_UP));
+                        ps.executeUpdate();
                     }
                 }
                 cn.commit();
@@ -178,9 +199,16 @@ public class ComercioRepositorio {
         try (Connection cn = fuente.obtenerConexion();
                 PreparedStatement ps = cn.prepareStatement(SELECT_FACTURA + "WHERE f.NUM_FACTURA = ?")) {
             ps.setInt(1, numFactura);
+            Factura f = null;
             try (ResultSet rs = ps.executeQuery()) {
-                return rs.next() ? Optional.of(factura(rs)) : Optional.empty();
+                if (rs.next()) {
+                    f = factura(rs);
+                }
             }
+            if (f != null) {
+                cargarLineas(cn, f);
+            }
+            return Optional.ofNullable(f);
         }
     }
 
@@ -194,8 +222,42 @@ public class ComercioRepositorio {
                     lista.add(factura(rs));
                 }
             }
+            for (Factura f : lista) {
+                cargarLineas(cn, f);
+            }
         }
         return lista;
+    }
+
+    /** Carga el detalle de la factura y arma el texto "Marca Modelo x2, Marca Modelo" para los clientes que solo muestran texto. */
+    private static void cargarLineas(Connection cn, Factura f) throws SQLException {
+        List<LineaFactura> lineas = new ArrayList<>();
+        try (PreparedStatement ps = cn.prepareStatement("SELECT d.COD_TELEFONO, t.MARCA, t.MODELO, d.CANTIDAD, d.PRECIO_UNITARIO "
+                + "FROM DETALLE_FACTURA d JOIN TELEFONO t ON t.COD_TELEFONO = d.COD_TELEFONO WHERE d.NUM_FACTURA = ? "
+                + "ORDER BY d.NUM_LINEA")) {
+            ps.setInt(1, f.getNumFactura());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lineas.add(new LineaFactura(rs.getInt(1), rs.getString(2) + " " + rs.getString(3), rs.getInt(4),
+                            rs.getBigDecimal(5).doubleValue()));
+                }
+            }
+        }
+        if (lineas.isEmpty()) {
+            return;   // factura anterior al detalle: se queda con el celular unico de la cabecera
+        }
+        f.setLineas(lineas);
+        StringBuilder sb = new StringBuilder();
+        for (LineaFactura l : lineas) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(l.getDescripcion());
+            if (l.getCantidad() > 1) {
+                sb.append(" x").append(l.getCantidad());
+            }
+        }
+        f.setTelefono(sb.toString());
     }
 
     private static Factura factura(ResultSet rs) throws SQLException {
