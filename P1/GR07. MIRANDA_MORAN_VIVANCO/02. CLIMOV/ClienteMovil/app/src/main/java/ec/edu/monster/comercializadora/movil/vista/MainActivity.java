@@ -3,12 +3,16 @@ package ec.edu.monster.comercializadora.movil.vista;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -39,15 +43,22 @@ import java.util.List;
  */
 public class MainActivity extends Activity {
 
-    private static final int AZUL = Color.parseColor("#1F3864");
-    private static final int AZUL_MEDIO = Color.parseColor("#2D5090");
-    private static final int ERROR = Color.parseColor("#B00020");
+    private static final int NAVY = Color.parseColor("#0B2A4A");
+    private static final int AZUL = Color.parseColor("#0F5C99");
+    private static final int ORO = Color.parseColor("#F2B01E");
+    private static final int FONDO = Color.parseColor("#F3F6FA");
+    private static final int BORDE = Color.parseColor("#D5DDE8");
+    private static final int TEXTO = Color.parseColor("#1F2937");
+    private static final int GRIS = Color.parseColor("#6B7A8D");
+    private static final int ERROR = Color.parseColor("#C0392B");
     private static final int EXITO = Color.parseColor("#1B7F3B");
 
     private ControladorMovil ctl;
     private LinearLayout contenido;
     private TextView lblEstado;
-    private Button[] botonesNav;
+    private LinearLayout[] itemsNav;
+    private LinearLayout panelServidor;
+    private EditText txtServidor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,59 +73,116 @@ public class MainActivity extends Activity {
     private View armarPantalla() {
         LinearLayout raiz = new LinearLayout(this);
         raiz.setOrientation(LinearLayout.VERTICAL);
+        raiz.setBackgroundColor(FONDO);
         raiz.setFitsSystemWindows(true);
 
         LinearLayout cabecera = new LinearLayout(this);
-        cabecera.setBackgroundResource(R.drawable.bg_cabecera);
-        cabecera.setGravity(Gravity.CENTER_VERTICAL);
-        cabecera.setPadding(dp(16), dp(12), dp(8), dp(12));
+        cabecera.setOrientation(LinearLayout.VERTICAL);
+        cabecera.setBackgroundColor(NAVY);
+        LinearLayout fila = new LinearLayout(this);
+        fila.setGravity(Gravity.CENTER_VERTICAL);
+        fila.setPadding(dp(16), dp(12), dp(8), dp(12));
+        fila.addView(new Icono(this, 0, ORO, NAVY, true), new LinearLayout.LayoutParams(dp(40), dp(40)));
+        LinearLayout nombres = new LinearLayout(this);
+        nombres.setOrientation(LinearLayout.VERTICAL);
+        nombres.setPadding(dp(12), 0, 0, 0);
         TextView titulo = new TextView(this);
         titulo.setText("Comercializadora");
         titulo.setTextColor(Color.WHITE);
-        titulo.setTextSize(20);
+        titulo.setTextSize(19);
         titulo.setTypeface(Typeface.DEFAULT_BOLD);
-        cabecera.addView(titulo, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        Button servidor = new Button(this);
-        servidor.setText("Servidor");
-        servidor.setAllCaps(false);
-        servidor.setOnClickListener(v -> dialogoServidor());
-        cabecera.addView(servidor);
+        nombres.addView(titulo);
+        TextView sub = new TextView(this);
+        sub.setText("Venta de celulares · BanQuito");
+        sub.setTextColor(Color.parseColor("#9DB4CC"));
+        sub.setTextSize(12);
+        nombres.addView(sub);
+        fila.addView(nombres, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        FrameLayout ajustes = new FrameLayout(this);
+        ajustes.addView(new Icono(this, 5, Color.WHITE, 0, false), new FrameLayout.LayoutParams(dp(26), dp(26), Gravity.CENTER));
+        ajustes.setOnClickListener(v -> panelServidor.setVisibility(panelServidor.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE));
+        fila.addView(ajustes, new LinearLayout.LayoutParams(dp(48), dp(48)));
+        cabecera.addView(fila);
+
+        panelServidor = new LinearLayout(this);
+        panelServidor.setOrientation(LinearLayout.VERTICAL);
+        panelServidor.setBackgroundColor(Color.parseColor("#123C66"));
+        panelServidor.setPadding(dp(16), dp(10), dp(16), dp(12));
+        panelServidor.setVisibility(View.GONE);
+        TextView ayuda = new TextView(this);
+        ayuda.setText("Servidor: en el emulador use 10.0.2.2; en un celular real, la IP de la PC.");
+        ayuda.setTextColor(Color.parseColor("#9DB4CC"));
+        ayuda.setTextSize(12);
+        panelServidor.addView(ayuda);
+        txtServidor = campo("http://IP:8080/Comercializadora/WSComercializadora");
+        txtServidor.setText(ctl.url());
+        txtServidor.setTextSize(13);
+        panelServidor.addView(txtServidor);
+        Button conectar = boton("Conectar", v -> {
+            ctl.cambiarUrl(txtServidor.getText().toString().trim());
+            panelServidor.setVisibility(View.GONE);
+            mostrarSeccion(0);
+        });
+        conectar.setBackground(fondo(ORO, 10, 0));
+        conectar.setTextColor(NAVY);
+        panelServidor.addView(conectar);
+        cabecera.addView(panelServidor);
         raiz.addView(cabecera);
 
         ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
         contenido = new LinearLayout(this);
         contenido.setOrientation(LinearLayout.VERTICAL);
-        contenido.setPadding(dp(16), dp(8), dp(16), dp(16));
+        contenido.setPadding(dp(16), dp(8), dp(16), dp(20));
         scroll.addView(contenido);
         raiz.addView(scroll, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 
         lblEstado = new TextView(this);
-        lblEstado.setPadding(dp(16), dp(4), dp(16), dp(4));
+        lblEstado.setPadding(dp(16), dp(6), dp(16), dp(6));
         lblEstado.setTextSize(13);
+        lblEstado.setTypeface(Typeface.DEFAULT_BOLD);
         raiz.addView(lblEstado);
 
         LinearLayout nav = new LinearLayout(this);
-        nav.setBackgroundColor(AZUL);
-        String[] nombres = {"Catalogo", "Venta", "Credito", "Facturas"};
-        botonesNav = new Button[nombres.length];
-        for (int i = 0; i < nombres.length; i++) {
+        nav.setBackgroundColor(Color.WHITE);
+        nav.setElevation(dp(8));
+        nav.setPadding(dp(6), dp(4), dp(6), dp(4));
+        String[] nombresNav = {"Catálogo", "Venta", "Crédito", "Facturas"};
+        itemsNav = new LinearLayout[nombresNav.length];
+        for (int i = 0; i < nombresNav.length; i++) {
             final int seccion = i;
-            Button b = new Button(this);
-            b.setText(nombres[i]);
-            b.setAllCaps(false);
-            b.setTextColor(Color.WHITE);
-            b.setBackgroundColor(Color.TRANSPARENT);
-            b.setOnClickListener(v -> mostrarSeccion(seccion));
-            botonesNav[i] = b;
-            nav.addView(b, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+            LinearLayout item = new LinearLayout(this);
+            item.setOrientation(LinearLayout.VERTICAL);
+            item.setGravity(Gravity.CENTER);
+            item.setPadding(0, dp(8), 0, dp(8));
+            LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams(dp(24), dp(24));
+            ilp.gravity = Gravity.CENTER_HORIZONTAL;
+            item.addView(new Icono(this, i + 1, GRIS, 0, false), ilp);
+            TextView t = new TextView(this);
+            t.setText(nombresNav[i]);
+            t.setTextSize(11);
+            t.setGravity(Gravity.CENTER);
+            item.addView(t);
+            item.setOnClickListener(v -> mostrarSeccion(seccion));
+            itemsNav[i] = item;
+            LinearLayout.LayoutParams nlp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+            nlp.setMargins(dp(3), 0, dp(3), 0);
+            nav.addView(item, nlp);
         }
         raiz.addView(nav);
         return raiz;
     }
 
     private void mostrarSeccion(int i) {
-        for (int k = 0; k < botonesNav.length; k++) {
-            botonesNav[k].setBackgroundColor(k == i ? AZUL_MEDIO : Color.TRANSPARENT);
+        for (int k = 0; k < itemsNav.length; k++) {
+            boolean activo = k == i;
+            Icono ic = (Icono) itemsNav[k].getChildAt(0);
+            ic.color = activo ? AZUL : GRIS;
+            ic.invalidate();
+            TextView t = (TextView) itemsNav[k].getChildAt(1);
+            t.setTextColor(activo ? AZUL : GRIS);
+            t.setTypeface(activo ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            itemsNav[k].setBackground(activo ? fondo(Color.parseColor("#E6F0FA"), 12, 0) : null);
         }
         contenido.removeAllViews();
         estado("", false);
@@ -129,22 +197,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void dialogoServidor() {
-        EditText txt = campo("URL del servicio");
-        txt.setText(ctl.url());
-        new AlertDialog.Builder(this).setTitle("Direccion del servicio")
-                .setMessage("En el emulador use 10.0.2.2; en un celular real, la IP de la PC.")
-                .setView(txt).setPositiveButton("Guardar", (d, w) -> {
-                    ctl.cambiarUrl(txt.getText().toString());
-                    mostrarSeccion(0);
-                }).setNegativeButton("Cancelar", null).show();
-    }
-
     // ---------------- Catalogo ----------------
 
     private void seccionCatalogo() {
-        contenido.addView(titulo("Catalogo de celulares"));
-        contenido.addView(boton("Agregar celular", v -> dialogoTelefono(null)));
+        contenido.addView(titulo("Catálogo de celulares"));
+        contenido.addView(boton("+  Agregar celular", v -> dialogoTelefono(null)));
         LinearLayout lista = new LinearLayout(this);
         lista.setOrientation(LinearLayout.VERTICAL);
         contenido.addView(lista);
@@ -152,11 +209,25 @@ public class MainActivity extends Activity {
             lista.removeAllViews();
             for (Telefono t : telefonos) {
                 LinearLayout tarjeta = tarjeta();
-                tarjeta.addView(texto(t.getMarca() + " " + t.getModelo(), true));
-                tarjeta.addView(texto(Formato.dinero(t.getPrecio()) + (t.isDisponible() ? "  (disponible)" : "  (no disponible)"), false));
+                LinearLayout cab = new LinearLayout(this);
+                cab.setGravity(Gravity.CENTER_VERTICAL);
+                cab.addView(new Icono(this, 1, AZUL, Color.parseColor("#E6F0FA"), true), new LinearLayout.LayoutParams(dp(40), dp(40)));
+                LinearLayout datos = new LinearLayout(this);
+                datos.setOrientation(LinearLayout.VERTICAL);
+                datos.setPadding(dp(12), 0, dp(8), 0);
+                datos.addView(texto(t.getMarca() + " " + t.getModelo(), true));
+                TextView pr = texto(Formato.dinero(t.getPrecio()), true);
+                pr.setTextColor(AZUL);
+                datos.addView(pr);
+                cab.addView(datos, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+                cab.addView(chip(t.isDisponible() ? "Disponible" : "Agotado", t.isDisponible() ? EXITO : ERROR));
+                tarjeta.addView(cab);
                 LinearLayout fila = new LinearLayout(this);
-                fila.addView(boton("Editar", v -> dialogoTelefono(t)), peso());
-                fila.addView(boton("Eliminar", v -> confirmarEliminar(t)), peso());
+                Button ed = botonSec("Editar", v -> dialogoTelefono(t));
+                Button el = botonSec("Eliminar", v -> confirmarEliminar(t));
+                el.setTextColor(ERROR);
+                fila.addView(ed, peso());
+                fila.addView(el, peso());
                 tarjeta.addView(fila);
                 lista.addView(tarjeta);
             }
@@ -227,7 +298,7 @@ public class MainActivity extends Activity {
 
     private void seccionVenta() {
         contenido.addView(titulo("Venta de celulares"));
-        EditText cedula = campo("Cedula (10 digitos)");
+        EditText cedula = campo("Cédula (10 dígitos)");
         cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
         EditText nombre = campo("Nombre (solo si es cliente nuevo)");
         Spinner combo = new Spinner(this);
@@ -309,13 +380,13 @@ public class MainActivity extends Activity {
     // ---------------- Credito ----------------
 
     private void seccionCredito() {
-        contenido.addView(titulo("Sujeto de credito"));
-        EditText cedula = campo("Cedula (10 digitos)");
+        contenido.addView(titulo("Sujeto de crédito"));
+        EditText cedula = campo("Cédula (10 dígitos)");
         cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
         LinearLayout resultado = new LinearLayout(this);
         resultado.setOrientation(LinearLayout.VERTICAL);
         contenido.addView(cedula);
-        contenido.addView(boton("Verificar", v -> {
+        contenido.addView(boton("Verificar sujeto de crédito", v -> {
             String ced = cedula.getText().toString().trim();
             estado("Consultando al banco...", false);
             ctl.ejecutar(() -> {
@@ -328,15 +399,19 @@ public class MainActivity extends Activity {
                 resultado.removeAllViews();
                 estado("", false);
                 LinearLayout t = tarjeta();
-                TextView veredicto = texto(ev.isSujetoCredito() ? "SI es sujeto de credito" : "NO es sujeto de credito", true);
+                TextView veredicto = texto(ev.isSujetoCredito() ? "Sí es sujeto de crédito" : "No es sujeto de crédito", true);
                 veredicto.setTextColor(ev.isSujetoCredito() ? EXITO : ERROR);
+                veredicto.setTextSize(18);
                 t.addView(veredicto);
                 t.addView(texto(ev.getMotivo(), false));
                 if (d != null) {
                     t.addView(texto("Cliente: " + d.getNombre(), false));
                     t.addView(texto("Promedio de depositos (3 meses): " + Formato.dinero(d.getPromedioDepositos()), false));
                     t.addView(texto("Promedio de retiros (3 meses): " + Formato.dinero(d.getPromedioRetiros()), false));
-                    t.addView(texto("Monto maximo: " + Formato.dinero(d.getMontoMaximo()), true));
+                    TextView mm = texto("Monto máximo: " + Formato.dinero(d.getMontoMaximo()), true);
+                    mm.setTextColor(AZUL);
+                    mm.setTextSize(17);
+                    t.addView(mm);
                 }
                 resultado.addView(t);
             }, m -> estado(m, true));
@@ -348,7 +423,7 @@ public class MainActivity extends Activity {
 
     private void seccionFacturas() {
         contenido.addView(titulo("Facturas de un cliente"));
-        EditText cedula = campo("Cedula (10 digitos)");
+        EditText cedula = campo("Cédula (10 dígitos)");
         cedula.setInputType(InputType.TYPE_CLASS_NUMBER);
         LinearLayout lista = new LinearLayout(this);
         lista.setOrientation(LinearLayout.VERTICAL);
@@ -380,30 +455,192 @@ public class MainActivity extends Activity {
 
     private LinearLayout tarjetaFactura(Factura f) {
         LinearLayout t = tarjeta();
-        t.addView(texto("Factura N. " + f.getNumFactura() + "  -  " + f.getFecha(), true));
+        LinearLayout cab = new LinearLayout(this);
+        cab.setGravity(Gravity.CENTER_VERTICAL);
+        TextView num = texto("Factura N.º " + f.getNumFactura(), true);
+        num.setTextSize(16);
+        cab.addView(num, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        boolean cred = "CREDITO".equalsIgnoreCase(f.getFormaPago());
+        cab.addView(chip(cred ? "Crédito" : "Efectivo", cred ? AZUL : EXITO));
+        t.addView(cab);
+        TextView fecha = texto(f.getFecha(), false);
+        fecha.setTextColor(GRIS);
+        fecha.setTextSize(12);
+        t.addView(fecha);
+        t.addView(separador());
         t.addView(texto(f.getNombreCliente() + " (" + f.getCedula() + ")", false));
-        t.addView(texto(f.getTelefono(), false));
-        t.addView(texto("Pago: " + f.getFormaPago()
-                + (f.getNumCuotas() > 0 ? " a " + f.getNumCuotas() + " cuotas" : ""), false));
-        t.addView(texto("Precio " + Formato.dinero(f.getPrecioLista()) + "   Descuento " + Formato.dinero(f.getDescuento()), false));
-        t.addView(texto("TOTAL " + Formato.dinero(f.getTotal()), true));
+        t.addView(texto(f.getTelefono() + (f.getNumCuotas() > 0 ? " · " + f.getNumCuotas() + " cuotas" : ""), false));
+        t.addView(fila2("Precio de lista", Formato.dinero(f.getPrecioLista())));
+        t.addView(fila2("Descuento", "- " + Formato.dinero(f.getDescuento())));
+        LinearLayout total = fila2("TOTAL", Formato.dinero(f.getTotal()));
+        for (int i = 0; i < 2; i++) {
+            TextView x = (TextView) total.getChildAt(i);
+            x.setTypeface(Typeface.DEFAULT_BOLD);
+            x.setTextColor(AZUL);
+            x.setTextSize(17);
+        }
+        t.addView(total);
         return t;
     }
 
+    private LinearLayout fila2(String izq, String der) {
+        LinearLayout f = new LinearLayout(this);
+        f.setPadding(0, dp(3), 0, 0);
+        TextView a = texto(izq, false);
+        a.setTextColor(GRIS);
+        TextView b = texto(der, false);
+        b.setGravity(Gravity.END);
+        f.addView(a, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        f.addView(b, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        return f;
+    }
+
+    private View separador() {
+        View v = new View(this);
+        v.setBackgroundColor(BORDE);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
+        lp.setMargins(0, dp(8), 0, dp(8));
+        v.setLayoutParams(lp);
+        return v;
+    }
+
     private View tablaAmortizacion(List<CuotaAmortizacion> filas) {
+        LinearLayout caja = tarjeta();
+        caja.setPadding(0, 0, 0, 0);
+        TextView tit = texto("Tabla de amortización", true);
+        tit.setPadding(dp(14), dp(12), dp(14), dp(8));
+        caja.addView(tit);
         HorizontalScrollView h = new HorizontalScrollView(this);
-        TextView t = new TextView(this);
-        t.setTypeface(Typeface.MONOSPACE);
-        t.setTextSize(11);
-        t.setTextColor(AZUL);
-        t.setText(Formato.tablaTexto(filas));
-        t.setPadding(dp(8), dp(8), dp(8), dp(8));
-        h.addView(t);
-        return h;
+        LinearLayout tabla = new LinearLayout(this);
+        tabla.setOrientation(LinearLayout.VERTICAL);
+        String[] cab = {"N.º", "Fecha", "Cuota", "Interés", "Capital", "Saldo"};
+        int[] ancho = {44, 96, 74, 70, 74, 80};
+        tabla.addView(filaTabla(cab, ancho, true, false));
+        int n = 0;
+        for (CuotaAmortizacion c : filas) {
+            String[] v = {String.valueOf(c.getNumCuota()), c.getFechaPago(), dos(c.getValorCuota()), dos(c.getInteresPagado()),
+                dos(c.getCapitalPagado()), dos(c.getSaldo())};
+            tabla.addView(filaTabla(v, ancho, false, n++ % 2 == 1));
+        }
+        h.addView(tabla);
+        caja.addView(h);
+        return caja;
+    }
+
+    private LinearLayout filaTabla(String[] celdas, int[] ancho, boolean cabecera, boolean zebra) {
+        LinearLayout f = new LinearLayout(this);
+        f.setBackgroundColor(cabecera ? NAVY : zebra ? FONDO : Color.WHITE);
+        for (int i = 0; i < celdas.length; i++) {
+            TextView t = new TextView(this);
+            t.setText(celdas[i]);
+            t.setTextSize(12);
+            t.setTextColor(cabecera ? Color.WHITE : TEXTO);
+            t.setTypeface(cabecera ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            t.setGravity(i < 2 ? Gravity.CENTER : Gravity.END);
+            t.setPadding(dp(6), dp(8), dp(8), dp(8));
+            f.addView(t, new LinearLayout.LayoutParams(dp(ancho[i]), ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+        return f;
+    }
+
+    private static String dos(double v) {
+        return String.format(java.util.Locale.US, "%,.2f", v);
+    }
+
+    private TextView chip(String s, int color) {
+        TextView c = new TextView(this);
+        c.setText(s);
+        c.setTextSize(11);
+        c.setTypeface(Typeface.DEFAULT_BOLD);
+        c.setTextColor(color);
+        c.setPadding(dp(10), dp(3), dp(10), dp(3));
+        c.setBackground(fondo((color & 0x00FFFFFF) | 0x22000000, 20, 0));
+        return c;
+    }
+
+    private GradientDrawable fondo(int color, int radio, int borde) {
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(color);
+        g.setCornerRadius(dp(radio));
+        if (borde != 0) {
+            g.setStroke(dp(1), borde);
+        }
+        return g;
+    }
+
+    /** Iconos dibujados con vectores: 0 logo, 1 celular, 2 carrito, 3 tarjeta, 4 factura, 5 engranaje. */
+    static class Icono extends View {
+        final int tipo;
+        int color;
+        final int fondoColor;
+        final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        Icono(android.content.Context c, int tipo, int color, int fondoColor, boolean conFondo) {
+            super(c);
+            this.tipo = tipo;
+            this.color = color;
+            this.fondoColor = conFondo ? fondoColor : 0;
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            float w = getWidth(), h = getHeight();
+            int trazo = color;
+            if (fondoColor != 0) {
+                p.setStyle(Paint.Style.FILL);
+                if (tipo == 0) {
+                    p.setColor(color);
+                    trazo = fondoColor;
+                } else {
+                    p.setColor(fondoColor);
+                }
+                c.drawRoundRect(0, 0, w, h, w * 0.3f, h * 0.3f, p);
+            }
+            p.setColor(trazo);
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(w * 0.08f);
+            p.setStrokeCap(Paint.Cap.ROUND);
+            float x = w * 0.5f, y = h * 0.5f, u = w * 0.22f;
+            switch (tipo) {
+                case 0:
+                case 1:
+                    c.drawRoundRect(x - u * 0.9f, y - u * 1.5f, x + u * 0.9f, y + u * 1.5f, u * 0.4f, u * 0.4f, p);
+                    c.drawLine(x - u * 0.3f, y + u * 1.0f, x + u * 0.3f, y + u * 1.0f, p);
+                    break;
+                case 2:
+                    c.drawLine(x - u * 1.5f, y - u * 1.3f, x - u * 0.9f, y - u * 1.3f, p);
+                    c.drawLine(x - u * 0.9f, y - u * 1.3f, x - u * 0.5f, y + u * 0.7f, p);
+                    c.drawLine(x - u * 0.5f, y + u * 0.7f, x + u * 1.3f, y + u * 0.7f, p);
+                    c.drawLine(x - u * 0.8f, y - u * 0.5f, x + u * 1.5f, y - u * 0.5f, p);
+                    p.setStyle(Paint.Style.FILL);
+                    c.drawCircle(x - u * 0.2f, y + u * 1.4f, u * 0.25f, p);
+                    c.drawCircle(x + u * 0.9f, y + u * 1.4f, u * 0.25f, p);
+                    break;
+                case 3:
+                    c.drawRoundRect(x - u * 1.5f, y - u * 1.0f, x + u * 1.5f, y + u * 1.0f, u * 0.3f, u * 0.3f, p);
+                    c.drawLine(x - u * 1.5f, y - u * 0.3f, x + u * 1.5f, y - u * 0.3f, p);
+                    c.drawLine(x - u * 1.1f, y + u * 0.5f, x - u * 0.2f, y + u * 0.5f, p);
+                    break;
+                case 4:
+                    c.drawRoundRect(x - u * 1.1f, y - u * 1.5f, x + u * 1.1f, y + u * 1.5f, u * 0.3f, u * 0.3f, p);
+                    c.drawLine(x - u * 0.6f, y - u * 0.6f, x + u * 0.6f, y - u * 0.6f, p);
+                    c.drawLine(x - u * 0.6f, y, x + u * 0.6f, y, p);
+                    c.drawLine(x - u * 0.6f, y + u * 0.6f, x + u * 0.2f, y + u * 0.6f, p);
+                    break;
+                default:
+                    c.drawCircle(x, y, u * 0.6f, p);
+                    for (int i = 0; i < 8; i++) {
+                        double a = Math.PI / 4 * i;
+                        c.drawLine((float) (x + Math.cos(a) * u), (float) (y + Math.sin(a) * u),
+                                (float) (x + Math.cos(a) * u * 1.5f), (float) (y + Math.sin(a) * u * 1.5f), p);
+                    }
+            }
+        }
     }
 
     private void estado(String texto, boolean esError) {
         lblEstado.setText(texto);
+        lblEstado.setVisibility(texto.isEmpty() ? View.GONE : View.VISIBLE);
         lblEstado.setTextColor(esError ? ERROR : EXITO);
         if (esError && !texto.isEmpty()) {
             Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
@@ -412,16 +649,16 @@ public class MainActivity extends Activity {
 
     private TextView titulo(String s) {
         TextView t = texto(s, true);
-        t.setTextSize(18);
-        t.setTextColor(AZUL);
-        t.setPadding(0, dp(8), 0, dp(4));
+        t.setTextSize(20);
+        t.setTextColor(NAVY);
+        t.setPadding(0, dp(14), 0, dp(4));
         return t;
     }
 
     private TextView texto(String s, boolean negrita) {
         TextView t = new TextView(this);
         t.setText(s);
-        t.setTextColor(Color.parseColor("#1F2937"));
+        t.setTextColor(TEXTO);
         t.setTextSize(15);
         if (negrita) {
             t.setTypeface(Typeface.DEFAULT_BOLD);
@@ -433,10 +670,12 @@ public class MainActivity extends Activity {
         EditText e = new EditText(this);
         e.setHint(pista);
         e.setSingleLine(true);
-        e.setBackgroundResource(R.drawable.bg_input);
-        e.setPadding(dp(12), 0, dp(12), 0);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
-        lp.topMargin = dp(8);
+        e.setTextColor(TEXTO);
+        e.setHintTextColor(Color.parseColor("#9AA7B6"));
+        e.setBackground(fondo(Color.WHITE, 10, BORDE));
+        e.setPadding(dp(14), 0, dp(14), 0);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(50));
+        lp.topMargin = dp(10);
         e.setLayoutParams(lp);
         return e;
     }
@@ -446,9 +685,11 @@ public class MainActivity extends Activity {
         b.setText(s);
         b.setAllCaps(false);
         b.setTextColor(Color.WHITE);
-        b.setBackgroundResource(R.drawable.bg_boton);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
-        lp.topMargin = dp(8);
+        b.setTypeface(Typeface.DEFAULT_BOLD);
+        b.setStateListAnimator(null);
+        b.setBackground(fondo(AZUL, 10, 0));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(50));
+        lp.topMargin = dp(12);
         b.setLayoutParams(lp);
         if (al != null) {
             b.setOnClickListener(al);
@@ -456,20 +697,28 @@ public class MainActivity extends Activity {
         return b;
     }
 
+    private Button botonSec(String s, View.OnClickListener al) {
+        Button b = boton(s, al);
+        b.setTextColor(AZUL);
+        b.setBackground(fondo(Color.WHITE, 10, AZUL));
+        return b;
+    }
+
     private LinearLayout.LayoutParams peso() {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, dp(44), 1);
-        lp.setMargins(dp(4), dp(8), dp(4), 0);
+        lp.setMargins(dp(4), dp(12), dp(4), 0);
         return lp;
     }
 
     private LinearLayout tarjeta() {
         LinearLayout t = new LinearLayout(this);
         t.setOrientation(LinearLayout.VERTICAL);
-        t.setBackgroundResource(R.drawable.bg_tarjeta);
-        t.setPadding(dp(14), dp(10), dp(14), dp(10));
+        t.setBackground(fondo(Color.WHITE, 14, BORDE));
+        t.setElevation(dp(2));
+        t.setPadding(dp(14), dp(12), dp(14), dp(12));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = dp(10);
+        lp.topMargin = dp(12);
         t.setLayoutParams(lp);
         return t;
     }
