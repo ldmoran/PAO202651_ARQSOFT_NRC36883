@@ -180,60 +180,164 @@ public class VentanaPrincipal extends JFrame {
         return m;
     }
 
-    /** Inicio de sesion: tarjeta centrada sobre el fondo azul del banco. */
+    /** Inicio de sesion (mismo diseno que el resto de proyectos): foto de Monster, campos con icono y boton azul. */
     private JPanel panelLogin() {
         JPanel fondo = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(java.awt.Graphics g) {
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                g2.setPaint(new GradientPaint(0, 0, Estilo.NAVY, getWidth(), getHeight(), new Color(0x0F5C99)));
+                g2.setPaint(new GradientPaint(0, 0, new Color(0xEAF1FB), getWidth(), getHeight(), new Color(0xC9DAF2)));
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 g2.dispose();
             }
         };
-        JPanel tarjeta = new JPanel(new GridBagLayout());
+        JPanel tarjeta = new JPanel(new BorderLayout());
         tarjeta.setBackground(Color.WHITE);
-        tarjeta.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
+        tarjeta.setBorder(BorderFactory.createLineBorder(new Color(0xC4D1E6)));
+        tarjeta.setPreferredSize(new Dimension(500, 640));
+        tarjeta.add(new Banner(), BorderLayout.NORTH);
+
+        JPanel cuerpo = new JPanel(new GridBagLayout());
+        cuerpo.setOpaque(false);
+        cuerpo.setBorder(BorderFactory.createEmptyBorder(4, 40, 22, 40));
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
         c.gridy = 0;
-        c.insets = new Insets(0, 0, 8, 0);
-        tarjeta.add(new Estilo.Logo(58), c);
+        c.insets = new Insets(14, 0, 4, 0);
         JLabel t = Estilo.titulo("EurekaBank");
         t.setHorizontalAlignment(SwingConstants.CENTER);
+        cuerpo.add(t, c);
         c.gridy = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        tarjeta.add(t, c);
-        JLabel st = Estilo.subtitulo("Ingrese sus credenciales");
-        st.setHorizontalAlignment(SwingConstants.CENTER);
-        c.gridy = 2;
         c.insets = new Insets(0, 0, 18, 0);
-        tarjeta.add(st, c);
-        c.insets = new Insets(4, 0, 4, 0);
+        JLabel st = Estilo.subtitulo("Cuentas · Movimientos · Operaciones. Ingrese sus credenciales.");
+        st.setHorizontalAlignment(SwingConstants.CENTER);
+        cuerpo.add(st, c);
+        c.gridy = 2;
+        c.insets = new Insets(0, 0, 12, 0);
+        cuerpo.add(campoConIcono(false, "Usuario", txtUsuario), c);
         c.gridy = 3;
-        tarjeta.add(campo("Usuario", txtUsuario), c);
-        c.gridy = 4;
-        tarjeta.add(campo("Clave", txtClave), c);
+        cuerpo.add(campoConIcono(true, "Clave", txtClave), c);
+
         txtServidorLogin.setText(direccion.isBlank() ? EurekaSoap.URL_POR_DEFECTO : direccion);
         txtServidorLogin.setFont(Estilo.fuente(Font.PLAIN, 12f));
+        txtServidorLogin.setVisible(false);
+        JLabel flecha = new JLabel("", new Triangulo(false), SwingConstants.LEFT);
+        flecha.setFont(Estilo.fuente(Font.BOLD, 12f));
+        flecha.setForeground(Estilo.GRIS);
+        flecha.setIconTextGap(8);
+        flecha.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        flecha.setToolTipText("Servidor");
+        flecha.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                boolean abrir = !txtServidorLogin.isVisible();
+                txtServidorLogin.setVisible(abrir);
+                flecha.setText(abrir ? "Servidor" : "");
+                flecha.setIcon(new Triangulo(abrir));
+                cuerpo.revalidate();
+            }
+        });
+        c.gridy = 4;
+        c.insets = new Insets(0, 0, 4, 0);
+        cuerpo.add(flecha, c);
         c.gridy = 5;
-        tarjeta.add(campo("Servidor", txtServidorLogin), c);
-        JButton entrar = Estilo.botonDorado("Ingresar", null);
+        cuerpo.add(txtServidorLogin, c);
+
+        JButton entrar = Estilo.botonPrimario("Ingresar", null);
+        JPanel zonaBoton = new JPanel();
+        zonaBoton.setOpaque(false);
+        entrar.setPreferredSize(new Dimension(200, 42));
+        zonaBoton.add(entrar);
         c.gridy = 6;
-        c.insets = new Insets(14, 0, 4, 0);
-        tarjeta.add(entrar, c);
+        c.insets = new Insets(12, 0, 4, 0);
+        cuerpo.add(zonaBoton, c);
         lblLogin.setHorizontalAlignment(SwingConstants.CENTER);
         lblLogin.setForeground(Estilo.ROJO);
         lblLogin.setFont(Estilo.fuente(Font.PLAIN, 12.5f));
         c.gridy = 7;
         c.insets = new Insets(4, 0, 0, 0);
-        tarjeta.add(lblLogin, c);
-        tarjeta.setPreferredSize(new Dimension(400, 520));
+        cuerpo.add(lblLogin, c);
+        JLabel pie = new JLabel("Arquitectura de Software · ESPE · GR07", SwingConstants.CENTER);
+        pie.setFont(Estilo.fuente(Font.PLAIN, 11.5f));
+        pie.setForeground(Estilo.GRIS);
+        c.gridy = 8;
+        c.insets = new Insets(10, 0, 0, 0);
+        cuerpo.add(pie, c);
+        tarjeta.add(cuerpo, BorderLayout.CENTER);
         fondo.add(tarjeta);
         entrar.addActionListener(e -> iniciarSesion());
         txtClave.addActionListener(e -> iniciarSesion());
         txtUsuario.addActionListener(e -> txtClave.requestFocusInWindow());
         return fondo;
+    }
+
+    /** Campo con un icono a la izquierda (usuario o llave), como en el login de los demas proyectos. */
+    private static JPanel campoConIcono(boolean llave, String pista, JTextField campo) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(new Color(0xF8FBFF));
+        p.setBorder(BorderFactory.createLineBorder(new Color(0xC4D1E6), 1, true));
+        JComponent ico = new JComponent() {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(new Color(0xF1F4F9));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(Estilo.NAVY);
+                g2.setStroke(new java.awt.BasicStroke(1.8f, java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+                int cx = getWidth() / 2, cy = getHeight() / 2;
+                if (llave) {
+                    g2.drawOval(cx - 9, cy - 1, 9, 9);
+                    g2.drawLine(cx - 2, cy + 2, cx + 8, cy - 8);
+                    g2.drawLine(cx + 4, cy - 4, cx + 7, cy - 1);
+                } else {
+                    g2.drawOval(cx - 4, cy - 9, 8, 8);
+                    g2.drawArc(cx - 9, cy + 1, 18, 16, 0, 180);
+                }
+                g2.dispose();
+            }
+        };
+        ico.setPreferredSize(new Dimension(42, 42));
+        campo.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        campo.setBackground(new Color(0xF8FBFF));
+        campo.putClientProperty("JTextField.placeholderText", pista);
+        p.add(ico, BorderLayout.WEST);
+        p.add(campo, BorderLayout.CENTER);
+        return p;
+    }
+
+    /** Foto de Monster en la parte superior de la tarjeta de inicio de sesion. */
+    private static final class Banner extends JComponent {
+        private final java.awt.image.BufferedImage img = cargar();
+
+        Banner() {
+            setPreferredSize(new Dimension(500, 250));
+        }
+
+        private static java.awt.image.BufferedImage cargar() {
+            try (java.io.InputStream in = VentanaPrincipal.class.getResourceAsStream("/monster.jpg")) {
+                return in == null ? null : javax.imageio.ImageIO.read(in);
+            } catch (java.io.IOException e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            if (img == null) {
+                g2.setColor(Estilo.NAVY);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            } else {
+                double esc = Math.max(getWidth() / (double) img.getWidth(), getHeight() / (double) img.getHeight());
+                int w = (int) (img.getWidth() * esc), h = (int) (img.getHeight() * esc);
+                g2.drawImage(img, (getWidth() - w) / 2, (getHeight() - h) / 2, w, h, null);
+            }
+            g2.dispose();
+        }
     }
 
     private void iniciarSesion() {
