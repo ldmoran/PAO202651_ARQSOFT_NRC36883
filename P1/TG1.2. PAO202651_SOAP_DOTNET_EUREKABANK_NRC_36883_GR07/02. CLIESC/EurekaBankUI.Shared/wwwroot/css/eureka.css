@@ -56,3 +56,10 @@
   .eb-salir { width: auto; padding: .4rem .7rem; font-size: .8rem; }
   .eb-contenido { padding: 16px 14px 30px; }
 }
+
+/* aviso de operaciones nuevas */
+.eb-toast { position: fixed; top: 16px; right: 16px; left: auto; max-width: min(420px, calc(100vw - 32px)); z-index: 50; background: var(--nv); color: #fff; border-left: 6px solid var(--oro);
+  padding: 14px 18px; border-radius: 12px; font-weight: 600; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); animation: eb-entra .35s ease both; }
+.eb-toast span { margin-right: 6px; }
+@keyframes eb-entra { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+@media (max-width: 760px) { .eb-toast { top: 10px; right: 10px; left: 10px; max-width: none; } }

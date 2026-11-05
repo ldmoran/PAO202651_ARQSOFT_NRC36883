@@ -2,6 +2,7 @@
 @using System.Globalization
 @inject SesionCliente Sesion
 @inject NavigationManager Navegacion
+@implements IDisposable
 
 <PageTitle>EurekaBank</PageTitle>
 
@@ -20,6 +21,10 @@
     </aside>
 
     <section class="eb-contenido">
+        @if (toast != "")
+        {
+            <div class="eb-toast" role="alert"><span>🔔</span> @toast</div>
+        }
         @if (estado != "")
         {
             <div class="eb-aviso @claseEstado" role="status">@estado</div>
@@ -121,6 +126,10 @@
     private string estado = "";
     private string claseEstado = "";
     private bool ocupado;
+    private string toast = "";
+    private Timer? reloj;
+    private readonly HashSet<string> vistos = new();
+    private bool revisando;
 
     protected override async Task OnInitializedAsync()
     {
@@ -136,7 +145,49 @@
             tipos = t.Datos;
             tipo = tipos[0];
         }
+        await Revisar(true);
+        // cada 5 segundos se consulta al servidor: si otro equipo registro una operacion, se avisa y se actualiza solo
+        reloj = new Timer(_ => InvokeAsync(async () => { await Revisar(false); StateHasChanged(); }), null, 5000, 5000);
     }
+
+    /// <summary>Busca movimientos que esta pantalla todavia no conocia. Con silencioso=true solo los memoriza (sin avisar).</summary>
+    private async Task Revisar(bool silencioso)
+    {
+        if (revisando || !Sesion.HaySesion) return;
+        revisando = true;
+        try
+        {
+            var r = await Sesion.Movimientos("");
+            if (!r.Ok) return;
+            var nuevos = r.Datos!.Where(m => !vistos.Contains(m.CodigoCuenta + "|" + m.Numero)).ToList();
+            foreach (var m in r.Datos!) vistos.Add(m.CodigoCuenta + "|" + m.Numero);
+            if (nuevos.Count == 0 || silencioso) return;
+            var ultimo = nuevos[0];
+            var texto = nuevos.Count == 1
+                ? $"{ultimo.Tipo}: {(ultimo.EsEntrada ? "+" : "−")}{ultimo.Importe.ToString("N2", CultureInfo.InvariantCulture)} en la cuenta {ultimo.CodigoCuenta} (saldo {ultimo.SaldoActual.ToString("N2", CultureInfo.InvariantCulture)})"
+                : $"{nuevos.Count} movimientos nuevos";
+            await CargarCuentas();
+            if (seccion == 1) await CargarMovimientos();
+            toast = texto;
+            _ = Ocultar(texto);
+        }
+        finally
+        {
+            revisando = false;
+        }
+    }
+
+    private async Task Ocultar(string texto)
+    {
+        await Task.Delay(7000);
+        await InvokeAsync(() =>
+        {
+            if (toast == texto) toast = "";
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose() => reloj?.Dispose();
 
     private string Clase(int i) => seccion == i ? "activo" : "";
 
@@ -206,6 +257,7 @@
         {
             importe = "";
             await CargarCuentas();
+            await Revisar(true);
             Aviso(r.Datos!, "eb-exito");
         }
         else
