@@ -110,51 +110,57 @@ public class ControladorWeb extends HttpServlet {
     private String venta(HttpServletRequest req, String ruta, boolean post) {
         var telefonos = servicio.listarTelefonos();
         if (!post) {
-            return Vistas.pagina(ruta, "Venta", null, false, Vistas.formularioVenta(telefonos, "", ""));
+            return Vistas.pagina(ruta, "Venta", null, false, Vistas.venta(telefonos, "", "", 0, false, 6, "", ""));
         }
         String cedula = param(req, "cedula");
         String nombre = param(req, "nombre");
         Integer cod = entero(param(req, "cod"));
         Integer plazo = entero(param(req, "plazo"));
         boolean credito = "credito".equals(param(req, "forma"));
+        int plazoMostrado = plazo == null ? 6 : plazo;
         if (cod == null || (credito && plazo == null)) {
-            return Vistas.pagina(ruta, "Venta", "Datos incompletos.", true, Vistas.formularioVenta(telefonos, cedula, nombre));
+            return Vistas.pagina(ruta, "Venta", "Datos incompletos.", true,
+                    Vistas.venta(telefonos, cedula, nombre, cod == null ? 0 : cod, credito, plazoMostrado, "", ""));
         }
         ResultadoFactura r = credito ? servicio.facturarCredito(cedula, nombre, cod, plazo)
                 : servicio.facturarEfectivo(cedula, nombre, cod);
-        StringBuilder contenido = new StringBuilder();
+        String factura = "";
+        String amort = "";
         if (r.isExito() && r.getFactura() != null) {
-            contenido.append(Vistas.factura(r.getFactura()));
+            factura = Vistas.factura(r.getFactura());
             if (credito) {
-                contenido.append(Vistas.amortizacion(servicio.obtenerAmortizacion(r.getFactura().getCodCredito())));
+                amort = Vistas.amortizacion(servicio.obtenerAmortizacion(r.getFactura().getCodCredito()));
             }
-        } else {
-            contenido.append(Vistas.formularioVenta(telefonos, cedula, nombre));
         }
-        return Vistas.pagina(ruta, "Venta", r.getMensaje(), !r.isExito(), contenido.toString());
+        return Vistas.pagina(ruta, "Venta", r.getMensaje(), !r.isExito(),
+                Vistas.venta(telefonos, cedula, nombre, cod, credito, plazoMostrado, factura, amort));
     }
 
     private String credito(HttpServletRequest req, String ruta, boolean post) {
         String cedula = param(req, "cedula");
-        StringBuilder contenido = new StringBuilder(Vistas.formularioCedula(cedula, "Verificar sujeto de credito"));
+        EvaluacionCredito ev = null;
+        DetalleMontoMaximo d = null;
         if (post) {
-            EvaluacionCredito ev = servicio.verificarSujetoCredito(cedula);
-            DetalleMontoMaximo d = ev.isSujetoCredito() ? servicio.calcularMontoMaximo(cedula) : null;
-            contenido.append(Vistas.evaluacion(ev, d));
+            ev = servicio.verificarSujetoCredito(cedula);
+            d = ev.isSujetoCredito() ? servicio.calcularMontoMaximo(cedula) : null;
         }
-        return Vistas.pagina(ruta, "Credito", null, false, contenido.toString());
+        return Vistas.pagina(ruta, "Credito", ev == null ? null : ev.getMotivo(), ev != null && !ev.isSujetoCredito(),
+                Vistas.credito(cedula, ev, d));
     }
 
     private String facturas(HttpServletRequest req, String ruta) {
         String cedula = param(req, "cedula");
-        StringBuilder contenido = new StringBuilder(Vistas.formularioCedula(cedula, "Buscar facturas"));
+        java.util.List<ec.edu.monster.cliente.modelos.Factura> lista = new java.util.ArrayList<>();
+        String amort = "";
+        String mensaje = null;
         if (!cedula.isEmpty()) {
-            contenido.append(Vistas.facturas(ruta, cedula, servicio.consultarFacturas(cedula)));
+            lista = servicio.consultarFacturas(cedula);
+            mensaje = lista.isEmpty() ? "El cliente no tiene facturas." : lista.size() + " facturas encontradas.";
             Integer credito = entero(param(req, "credito"));
             if (credito != null) {
-                contenido.append(Vistas.amortizacion(servicio.obtenerAmortizacion(credito)));
+                amort = Vistas.amortizacion(servicio.obtenerAmortizacion(credito));
             }
         }
-        return Vistas.pagina(ruta, "Facturas", null, false, contenido.toString());
+        return Vistas.pagina(ruta, "Facturas", mensaje, false, Vistas.facturas(ruta, cedula, lista, !cedula.isEmpty(), amort));
     }
 }
