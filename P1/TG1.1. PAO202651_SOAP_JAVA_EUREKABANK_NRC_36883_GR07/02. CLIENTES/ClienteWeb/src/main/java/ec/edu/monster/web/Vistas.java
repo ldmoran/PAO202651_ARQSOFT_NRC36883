@@ -25,23 +25,24 @@ public final class Vistas {
                 + "<link rel=\"stylesheet\" href=\"" + ruta + "/css/estilo.css\"></head><body>";
     }
 
-    /** Pagina de inicio de sesion. */
+    /** Pagina de inicio de sesion (mismo diseno que el resto de proyectos: foto de Monster, campos con icono y boton azul). */
     public static String login(String ruta, String mensaje, String servidor) {
         StringBuilder sb = new StringBuilder(cabeza(ruta, "Iniciar sesión"));
         sb.append("<main class=\"login\"><section class=\"login-tarjeta\">")
-                .append("<div class=\"logo\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\">")
-                .append("<path d=\"M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18\"/></svg></div>")
-                .append("<h1>EurekaBank</h1><p>Ingrese sus credenciales para continuar.</p>");
-        if (mensaje != null && !mensaje.isEmpty()) {
-            sb.append("<p class=\"aviso error\">").append(e(mensaje)).append("</p>");
-        }
+                .append("<img class=\"banner\" src=\"").append(ruta).append("/img/monster.jpg\" alt=\"Monster\">")
+                .append("<div class=\"login-cuerpo\"><h1>EurekaBank</h1>")
+                .append("<p>Cuentas · Movimientos · Operaciones. Ingrese sus credenciales para continuar.</p>");
         sb.append("<form method=\"post\" action=\"").append(ruta).append("/index\">")
-                .append("<label>Usuario <input name=\"usuario\" autocomplete=\"username\" required autofocus></label>")
-                .append("<label>Clave <input name=\"clave\" type=\"password\" autocomplete=\"current-password\" required></label>")
-                .append("<details><summary>Servidor</summary><label>Dirección del servicio <input name=\"servidor\" value=\"")
+                .append("<div class=\"campo-icono\"><span class=\"ico\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7\"/></svg></span>")
+                .append("<input name=\"usuario\" placeholder=\"Usuario\" autocomplete=\"username\" required autofocus></div>")
+                .append("<div class=\"campo-icono\"><span class=\"ico\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"M11 12l9-9M16 7l3 3M14 9l2 2\"/></svg></span>")
+                .append("<input name=\"clave\" type=\"password\" placeholder=\"Clave\" autocomplete=\"current-password\" required></div>")
+                .append("<details><summary title=\"Servidor\"></summary><label>Servidor<input name=\"servidor\" value=\"")
                 .append(e(servidor)).append("\"></label></details>")
-                .append("<button class=\"principal\">Ingresar</button></form>")
-                .append("<small>Arquitectura de Software · ESPE · GR07</small></section></main></body></html>");
+                .append("<button class=\"entrar\">Ingresar</button></form>");
+        sb.append("<div class=\"estado").append(mensaje != null && !mensaje.isEmpty() ? " error" : "").append("\">")
+                .append(e(mensaje == null ? "" : mensaje)).append("</div>")
+                .append("<small>Arquitectura de Software · ESPE · GR07</small></div></section></main></body></html>");
         return sb.toString();
     }
 

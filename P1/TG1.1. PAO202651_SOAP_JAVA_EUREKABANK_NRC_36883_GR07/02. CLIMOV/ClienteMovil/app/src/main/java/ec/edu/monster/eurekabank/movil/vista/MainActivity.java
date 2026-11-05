@@ -204,16 +204,31 @@ public class MainActivity extends Activity {
 
     private void seccionLogin() {
         nav.setVisibility(View.GONE);
-        contenido.addView(titulo("Iniciar sesión"));
-        TextView ayuda = texto("Ingrese sus credenciales de EurekaBank.", false);
+        LinearLayout tarjeta = tarjeta();
+        tarjeta.setPadding(0, 0, 0, 0);
+        tarjeta.setClipToOutline(true);
+        android.widget.ImageView banner = new android.widget.ImageView(this);
+        banner.setImageResource(R.drawable.monster);
+        banner.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+        tarjeta.addView(banner, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(200)));
+        LinearLayout cuerpo = new LinearLayout(this);
+        cuerpo.setOrientation(LinearLayout.VERTICAL);
+        cuerpo.setPadding(dp(20), dp(8), dp(20), dp(20));
+        TextView t = texto("EurekaBank", true);
+        t.setTextSize(22);
+        t.setTextColor(AZUL);
+        t.setGravity(Gravity.CENTER);
+        t.setPadding(0, dp(10), 0, dp(4));
+        cuerpo.addView(t);
+        TextView ayuda = texto("Cuentas · Movimientos · Operaciones. Ingrese sus credenciales para continuar.", false);
         ayuda.setTextColor(GRIS);
-        contenido.addView(ayuda);
-        EditText usuario = campo("Usuario");
-        EditText clave = campo("Clave");
+        ayuda.setTextSize(13);
+        ayuda.setGravity(Gravity.CENTER);
+        cuerpo.addView(ayuda);
+        EditText usuario = campoIcono(cuerpo, 6, "Usuario");
+        EditText clave = campoIcono(cuerpo, 7, "Clave");
         clave.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        contenido.addView(usuario);
-        contenido.addView(clave);
-        contenido.addView(boton("Ingresar", v -> {
+        Button entrar = boton("Ingresar", v -> {
             String u = usuario.getText().toString().trim();
             String c = clave.getText().toString();
             if (u.isEmpty() || c.isEmpty()) {
@@ -229,8 +244,34 @@ public class MainActivity extends Activity {
                 } else {
                     estado("Usuario o clave incorrectos.", true);
                 }
-            }, m -> estado(m, true));
-        }));
+            }, mensaje -> estado(mensaje, true));
+        });
+        cuerpo.addView(entrar);
+        tarjeta.addView(cuerpo);
+        contenido.addView(tarjeta);
+    }
+
+    /** Campo con icono a la izquierda (6 usuario, 7 llave); devuelve el EditText. */
+    private EditText campoIcono(LinearLayout padre, int icono, String pista) {
+        LinearLayout fila = new LinearLayout(this);
+        fila.setGravity(Gravity.CENTER_VERTICAL);
+        fila.setBackground(fondo(Color.parseColor("#F8FBFF"), 10, BORDE));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(50));
+        lp.topMargin = dp(12);
+        fila.setLayoutParams(lp);
+        LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams(dp(22), dp(22));
+        ilp.setMargins(dp(14), 0, dp(4), 0);
+        fila.addView(new Icono(this, icono, NAVY, 0, false), ilp);
+        EditText e = new EditText(this);
+        e.setHint(pista);
+        e.setSingleLine(true);
+        e.setTextColor(TEXTO);
+        e.setHintTextColor(Color.parseColor("#9AA7B6"));
+        e.setBackground(null);
+        e.setPadding(dp(10), 0, dp(12), 0);
+        fila.addView(e, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        padre.addView(fila);
+        return e;
     }
 
     // ---------------- Cuentas ----------------
@@ -536,6 +577,15 @@ public class MainActivity extends Activity {
                     c.drawLine(x - u * 0.6f, y - u * 0.6f, x + u * 0.6f, y - u * 0.6f, p);
                     c.drawLine(x - u * 0.6f, y, x + u * 0.6f, y, p);
                     c.drawLine(x - u * 0.6f, y + u * 0.6f, x + u * 0.2f, y + u * 0.6f, p);
+                    break;
+                case 6:
+                    c.drawCircle(x, y - u * 0.8f, u * 0.8f, p);
+                    c.drawArc(x - u * 1.5f, y + u * 0.1f, x + u * 1.5f, y + u * 2.3f, 180, 180, false, p);
+                    break;
+                case 7:
+                    c.drawCircle(x - u * 0.7f, y + u * 0.5f, u * 0.9f, p);
+                    c.drawLine(x - u * 0.1f, y - u * 0.1f, x + u * 1.6f, y - u * 1.8f, p);
+                    c.drawLine(x + u * 0.9f, y - u * 0.8f, x + u * 1.5f, y - u * 0.2f, p);
                     break;
                 default:
                     c.drawCircle(x, y, u * 0.6f, p);
