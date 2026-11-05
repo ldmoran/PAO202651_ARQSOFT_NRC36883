@@ -1,0 +1,228 @@
+@page "/panel"
+@using System.Globalization
+@inject SesionCliente Sesion
+@inject NavigationManager Navegacion
+
+<PageTitle>EurekaBank</PageTitle>
+
+<div class="eb-app">
+    <aside class="eb-menu">
+        <div class="eb-logo"><span class="eb-logo-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18" /></svg></span><div><strong>EurekaBank</strong><small>Banca en línea</small></div></div>
+        <nav>
+            <button type="button" class="eb-nav @Clase(0)" @onclick="() => Ir(0)">Cuentas</button>
+            <button type="button" class="eb-nav @Clase(1)" @onclick="() => Ir(1)">Movimientos</button>
+            <button type="button" class="eb-nav @Clase(2)" @onclick="() => Ir(2)">Operar</button>
+        </nav>
+        <div class="eb-pie">
+            <div class="eb-usuario">@Sesion.Usuario</div>
+            <button type="button" class="eb-salir" @onclick="Salir">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <section class="eb-contenido">
+        @if (estado != "")
+        {
+            <div class="eb-aviso @claseEstado" role="status">@estado</div>
+        }
+
+        @if (seccion == 0)
+        {
+            <h2>Cuentas</h2>
+            <div class="eb-tarjetas">
+                @foreach (var c in cuentas)
+                {
+                    <article class="eb-cuenta">
+                        <header><span class="eb-codigo">@c.Codigo</span><span class="eb-chip eb-ok">@c.Estado</span></header>
+                        <h3>@c.NombreCliente</h3>
+                        <div class="eb-saldo">@c.Moneda @c.Saldo.ToString("N2", CultureInfo.InvariantCulture)</div>
+                        <small>@c.Email · @c.Telefono</small>
+                        <div class="eb-acciones"><button type="button" class="eb-sec" @onclick="() => VerMovimientos(c.Codigo)">Ver movimientos</button></div>
+                    </article>
+                }
+            </div>
+        }
+        else if (seccion == 1)
+        {
+            <h2>Movimientos</h2>
+            <div class="eb-barra">
+                <select @bind="cuentaMov" @bind:after="CargarMovimientos">
+                    <option value="">Todas las cuentas</option>
+                    @foreach (var c in cuentas)
+                    {
+                        <option value="@c.Codigo">@c.Codigo — @c.NombreCliente</option>
+                    }
+                </select>
+                <button type="button" @onclick="CargarMovimientos">Actualizar</button>
+            </div>
+            <div class="eb-tabla-caja">
+                <table class="eb-tabla">
+                    <thead><tr><th>Cuenta</th><th>N.º</th><th>Fecha</th><th>Tipo</th><th class="der">Importe</th><th class="der">Saldo</th><th>Referencia</th></tr></thead>
+                    <tbody>
+                    @foreach (var m in movimientos)
+                    {
+                        <tr>
+                            <td>@m.CodigoCuenta</td><td>@m.Numero</td><td>@m.Fecha</td>
+                            <td><span class="eb-chip @(m.EsEntrada ? "eb-ok" : "eb-mal")">@m.Tipo</span></td>
+                            <td class="der @(m.EsEntrada ? "eb-pos" : "eb-neg")">@(m.EsEntrada ? "+" : "−")@m.Importe.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td class="der">@m.SaldoActual.ToString("N2", CultureInfo.InvariantCulture)</td>
+                            <td>@m.Referencia</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h2>Operar</h2>
+            <form class="eb-form" @onsubmit="Registrar" @onsubmit:preventDefault="true">
+                <label for="tipo">Tipo de operación</label>
+                <select id="tipo" @bind="tipo">
+                    @foreach (var t in tipos)
+                    {
+                        <option value="@t">@Titulo(t)</option>
+                    }
+                </select>
+                <label for="origen">Cuenta @(tipo == "TRANSFERENCIA" ? "origen" : "")</label>
+                <select id="origen" @bind="origen">
+                    @foreach (var c in cuentas)
+                    {
+                        <option value="@c.Codigo">@c.Codigo — @c.NombreCliente (@c.Saldo.ToString("N2", CultureInfo.InvariantCulture))</option>
+                    }
+                </select>
+                @if (tipo == "TRANSFERENCIA")
+                {
+                    <label for="destino">Cuenta destino</label>
+                    <select id="destino" @bind="destino">
+                        @foreach (var c in cuentas)
+                        {
+                            <option value="@c.Codigo">@c.Codigo — @c.NombreCliente</option>
+                        }
+                    </select>
+                }
+                <label for="importe">Importe</label>
+                <input id="importe" inputmode="decimal" placeholder="0.00" @bind="importe" @bind:event="oninput" />
+                <button type="submit" class="eb-principal" disabled="@ocupado">Registrar @Titulo(tipo).ToLower()</button>
+            </form>
+        }
+    </section>
+</div>
+
+@code {
+    private int seccion;
+    private List<Cuenta> cuentas = new();
+    private List<Movimiento> movimientos = new();
+    private List<string> tipos = new() { "DEPOSITO", "RETIRO", "TRANSFERENCIA" };
+    private string cuentaMov = "";
+    private string tipo = "DEPOSITO";
+    private string origen = "";
+    private string destino = "";
+    private string importe = "";
+    private string estado = "";
+    private string claseEstado = "";
+    private bool ocupado;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Sesion.HaySesion)
+        {
+            Navegacion.NavigateTo("");
+            return;
+        }
+        await CargarCuentas();
+        var t = await Sesion.Tipos();
+        if (t.Ok && t.Datos!.Count > 0)
+        {
+            tipos = t.Datos;
+            tipo = tipos[0];
+        }
+    }
+
+    private string Clase(int i) => seccion == i ? "activo" : "";
+
+    private static string Titulo(string t) => t.Length == 0 ? t : char.ToUpper(t[0]) + t.Substring(1).ToLowerInvariant().Replace("deposito", "depósito");
+
+    private async Task Ir(int i)
+    {
+        seccion = i;
+        Aviso("", "");
+        if (i == 1)
+        {
+            await CargarMovimientos();
+        }
+        else
+        {
+            await CargarCuentas();
+        }
+    }
+
+    private async Task CargarCuentas()
+    {
+        var r = await Sesion.Cuentas();
+        if (!r.Ok)
+        {
+            Aviso(r.Error!, "eb-error");
+            return;
+        }
+        cuentas = r.Datos!;
+        if (cuentas.Count > 0)
+        {
+            if (!cuentas.Any(c => c.Codigo == origen)) origen = cuentas[0].Codigo;
+            if (!cuentas.Any(c => c.Codigo == destino)) destino = cuentas.Count > 1 ? cuentas[1].Codigo : cuentas[0].Codigo;
+        }
+    }
+
+    private async Task VerMovimientos(string cuenta)
+    {
+        cuentaMov = cuenta;
+        seccion = 1;
+        await CargarMovimientos();
+    }
+
+    private async Task CargarMovimientos()
+    {
+        var r = await Sesion.Movimientos(cuentaMov);
+        if (!r.Ok)
+        {
+            Aviso(r.Error!, "eb-error");
+            return;
+        }
+        movimientos = r.Datos!;
+        Aviso(movimientos.Count + " movimientos.", "eb-info");
+    }
+
+    private async Task Registrar()
+    {
+        if (ocupado) return;
+        if (!decimal.TryParse(importe.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out var valor) || valor <= 0)
+        {
+            Aviso("Ingrese un importe mayor a 0 (por ejemplo 150.50).", "eb-error");
+            return;
+        }
+        ocupado = true;
+        var r = await Sesion.Registrar(tipo, origen, tipo == "TRANSFERENCIA" ? destino : null, valor);
+        ocupado = false;
+        if (r.Ok)
+        {
+            importe = "";
+            await CargarCuentas();
+            Aviso(r.Datos!, "eb-exito");
+        }
+        else
+        {
+            Aviso(r.Error!, "eb-error");
+        }
+    }
+
+    private void Aviso(string texto, string clase)
+    {
+        estado = texto;
+        claseEstado = clase;
+    }
+
+    private void Salir()
+    {
+        Sesion.CerrarSesion();
+        Navegacion.NavigateTo("");
+    }
+}

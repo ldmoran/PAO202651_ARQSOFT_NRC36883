@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ec.edu.monster.ClienteConsola</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- El cliente SOAP es el mismo que usan escritorio, web y movil: se comparte el archivo fuente -->
+    <Compile Include="..\..\02. CLIESC\EurekaBankUI.Shared\Modelos\SoapClient.cs" Link="Modelos\SoapClient.cs" />
+  </ItemGroup>
+
+</Project>
