@@ -62,3 +62,9 @@ APK listo en `02. CLIMOV/ClienteMovil-GR07.apk`. En el login, abrir "Servidor" y
 (en el emulador es `10.0.2.2`).
 Compilar: `dotnet build -f net10.0-android -c Release` (copiar el proyecto a una ruta corta, por ejemplo
 `C:\eub`, por el límite de 260 caracteres de Windows).
+
+## Archivos en la raíz y pruebas
+- `EurekaBank_RESTDOTNET_GR07.sln`: solución de Visual Studio con el servidor, sus pruebas, la consola, la interfaz compartida, el escritorio y la web (el móvil MAUI se abre aparte).
+- `POWER DESIGNER/`: modelos de Power Designer (`MER` y `UML`, incluidos clases y actividad).
+- Pruebas: `01. SERVIDOR/API_EurekaBank_RESTDOTNET_GR07.Pruebas` (35 pruebas xUnit: servicio + API REST por HTTP). Ejecutar con `dotnet test`.
+- Documentación completa en `04. DOCUMENTACION` (ERS, ECUD, diccionario, manuales, presentación y capturas en `08. EVIDENCIAS`).

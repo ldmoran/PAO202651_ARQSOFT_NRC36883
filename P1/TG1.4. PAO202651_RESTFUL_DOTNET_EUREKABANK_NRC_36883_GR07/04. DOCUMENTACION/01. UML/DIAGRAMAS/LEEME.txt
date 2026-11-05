@@ -8,3 +8,10 @@ Diagramas de esta carpeta:
   no con la herramienta de diagramado del grupo. Si se requiere editarlo con PowerDesigner, usar
   Arquitectura_EurekaBank.oom como base y actualizar las etiquetas de "SOAP/WSDL/CoreWCF" a
   "REST/JSON/ASP.NET Core Web API".
+
+Agregados despues (todos en Power Designer, con su .oom/.oob y su .png):
+- DiagramaClases_EurekaBank.*                -> clases del servidor REST (controladores REST, servicio, repositorio, modelos).
+- ActividadIniciarSesion.*                    -> actividad de iniciar sesion.
+- ActividadRegistrarTransferencia.*           -> actividad de registrar una transferencia.
+- Arquitectura_EurekaBank_REST.*              -> arquitectura REST / ASP.NET Core Web API (version editable en Power Designer).
+- Secuencia_Transferencia_REST.*              -> secuencia de la transferencia con la llamada POST /api/movimientos.

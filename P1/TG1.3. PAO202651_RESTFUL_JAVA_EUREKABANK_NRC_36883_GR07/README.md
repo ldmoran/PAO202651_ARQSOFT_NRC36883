@@ -65,3 +65,6 @@ APK listo: `02. CLIMOV/EurekaBank_REST_Java_GR07.apk`. En el login, abrir «Serv
 `http://IP_DEL_PC:8080/REST_EurekaBank_Java_GR07/api/` (en el emulador es `10.0.2.2`).
 Compilar: `gradlew.bat assembleDebug` (JDK 17+ y Android SDK 34).
 
+
+## Archivos en la raíz
+- `POWER DESIGNER/`: modelos de Power Designer (`MER` y `UML`).

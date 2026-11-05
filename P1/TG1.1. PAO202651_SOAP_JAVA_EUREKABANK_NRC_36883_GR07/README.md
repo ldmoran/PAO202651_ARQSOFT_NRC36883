@@ -43,3 +43,7 @@ asadmin deploy --force=true ClienteWeb/target/ClienteWeb.war       # http://loca
 Móvil: instalar `EurekaBank_SOAP_Java_GR07.apk`; en el engranaje de la cabecera escribir
 `http://IP_DEL_PC:8080/WS_EurekaBank_SOAPJAVA_GR07/WSEurekaBank` (en el emulador, `10.0.2.2`).
 Para compilarlo: `./gradlew assembleDebug` con JDK 21 (y `local.properties` con `sdk.dir`).
+
+## Archivos en la raíz y pruebas
+- `POWER DESIGNER/`: modelos de Power Designer (`MER/*.cdm, *.ldm, *.pdm` y `UML/*.oom`).
+- `APK`: `02. CLIMOV/EurekaBank_SOAP_Java_GR07.apk` (en el celular, abrir el engranaje de la cabecera y escribir la dirección del servicio).
