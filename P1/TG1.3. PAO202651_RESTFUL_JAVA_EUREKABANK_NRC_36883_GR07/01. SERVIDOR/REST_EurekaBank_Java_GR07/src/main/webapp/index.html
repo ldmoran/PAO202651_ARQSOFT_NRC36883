@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>EurekaBank - API REST</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1f2937; }
+        h1 { color: #1f3864; }
+        table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+        th, td { border: 1px solid #c7d2e5; padding: .5rem .7rem; text-align: left; }
+        th { background: #4f81bd; color: #fff; }
+        code { background: #eef2f9; padding: 0 .3rem; }
+    </style>
+</head>
+<body>
+    <h1>EurekaBank</h1>
+    <p>API REST (Jakarta REST, JSON sobre HTTP) con base de datos MySQL del Grupo 07. Primero se llama a
+       <code>POST /api/sesion/login</code>; después se consultan las cuentas y se registran los movimientos.</p>
+    <table>
+        <tr><th>Recurso</th><th>Método y URI</th><th>Entrada</th></tr>
+        <tr><td>SesionResource</td><td><code>POST /api/sesion/login</code></td><td>JSON: usuario, contrasena</td></tr>
+        <tr><td>CuentaResource</td><td><code>GET /api/cuentas</code></td><td>Sin cuerpo</td></tr>
+        <tr><td>MovimientoResource</td><td><code>GET /api/movimientos?cuenta=00100001</code><br><code>GET /api/movimientos/tipos</code><br><code>POST /api/movimientos</code></td>
+            <td>POST: JSON con cuentaOrigen, cuentaDestino, tipo e importe</td></tr>
+    </table>
+    <p>Tipos de movimiento: <code>DEPOSITO</code>, <code>RETIRO</code> y <code>TRANSFERENCIA</code>. El código de estado HTTP indica el
+       resultado (200, 400, 401, 422 o 500).</p>
+</body>
+</html>
