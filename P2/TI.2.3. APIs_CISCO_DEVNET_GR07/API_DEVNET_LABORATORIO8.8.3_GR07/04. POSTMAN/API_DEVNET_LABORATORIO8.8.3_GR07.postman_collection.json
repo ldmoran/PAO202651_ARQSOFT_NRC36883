@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "7c1a9d52-3f0e-4b8a-9a55-0c8b1e4d6a07",
+		"name": "API_DEVNET_LABORATORIO8.8.3_GR07",
+		"description": "Laboratorio 8.8.3 - Implementar API REST con un controlador SDN (Packet Tracer). Primero ejecutar addTicket: guarda el ticket en la variable serviceTicket y las otras peticiones lo usan en la cabecera X-Auth-Token.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01 addTicket",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var json = pm.response.json();",
+							"if (json.response && json.response.serviceTicket) {",
+							"    pm.collectionVariables.set('serviceTicket', json.response.serviceTicket);",
+							"}",
+							"pm.test('Ticket generado (201)', function () { pm.response.to.have.status(201); });"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"cisco\",\n    \"password\": \"cisco123!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:58000/api/v1/ticket",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "58000",
+					"path": ["api", "v1", "ticket"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02 getNetworkDevice",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{serviceTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:58000/api/v1/network-device",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "58000",
+					"path": ["api", "v1", "network-device"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03 getHost",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Auth-Token",
+						"value": "{{serviceTicket}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:58000/api/v1/host",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "58000",
+					"path": ["api", "v1", "host"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "00 getHost sin ticket (prueba de acceso externo)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:58000/api/v1/host",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "58000",
+					"path": ["api", "v1", "host"]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "serviceTicket",
+			"value": ""
+		}
+	]
+}

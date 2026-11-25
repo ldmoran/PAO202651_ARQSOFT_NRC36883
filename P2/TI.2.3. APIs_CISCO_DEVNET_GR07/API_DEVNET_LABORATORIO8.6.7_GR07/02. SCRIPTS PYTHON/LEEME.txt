@@ -1,0 +1,14 @@
+Laboratorio 8.6.7 - Webex Teams con Python
+1) Generar el token personal en https://developer.webex.com (Documentacion > Comenzar). Dura 12 horas.
+2) En PowerShell:
+     $env:WEBEX_TOKEN = "<token>"
+     $env:WEBEX_EMAIL = "<correo de otro usuario Webex>"
+3) Ejecutar en este orden:
+     python authentication.py
+     python list-people.py
+     python list-rooms.py
+     python create-rooms.py        (guarda el ID en room_id.txt)
+     python list-memberships.py
+     python create-membership.py
+     python creat-markdown-message.py
+No escriba el token dentro de los archivos .py.
