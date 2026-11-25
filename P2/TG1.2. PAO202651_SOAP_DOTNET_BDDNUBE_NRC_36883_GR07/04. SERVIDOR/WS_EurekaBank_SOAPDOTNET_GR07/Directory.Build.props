@@ -1,0 +1,15 @@
+<Project>
+
+  <!--
+    La DLL nativa de SQL Server (Microsoft.Data.SqlClient.SNI.dll) normalmente queda en
+    bin\Debug\net8.0\runtimes\win-x64\native\. Con carpetas largas como estas, Windows pasa del limite de
+    260 caracteres y no puede cargarla ("El nombre del archivo o la extension es demasiado largo").
+    Compilando para win-x64 la DLL queda directamente en bin\Debug\net8.0\, varias carpetas mas arriba.
+  -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+</Project>

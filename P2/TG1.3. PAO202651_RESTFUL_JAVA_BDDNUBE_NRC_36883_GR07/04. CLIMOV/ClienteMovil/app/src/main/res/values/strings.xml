@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">EurekaBank REST Java</string>
+    <string name="titulo">EurekaBank</string>
+    <string name="subtitulo">Cuentas · Movimientos · Transferencias</string>
+    <string name="servidor">Servidor</string>
+    <string name="usuario">Usuario</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="cuentas">Cuentas</string>
+    <string name="movimientos">Movimientos</string>
+    <string name="operar">Operar</string>
+    <string name="cuenta">Cuenta</string>
+    <string name="tipo">Tipo de movimiento</string>
+    <string name="cuenta_origen">Cuenta origen</string>
+    <string name="cuenta_destino">Cuenta destino (solo transferencia)</string>
+    <string name="importe">Importe</string>
+    <string name="registrar">Registrar movimiento</string>
+    <string name="ver_movimientos">Ver movimientos</string>
+    <string name="actualizar">Actualizar</string>
+</resources>

@@ -1,0 +1,9 @@
+<Router AppAssembly="typeof(Main).Assembly"
+        AdditionalAssemblies="new[] { typeof(ec.edu.monster.Cliente.Servicios.SesionCliente).Assembly }">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" />
+    </Found>
+    <NotFound>
+        <main class="tarjeta"><div class="caja"><h1 class="titulo">Página no encontrada</h1></div></main>
+    </NotFound>
+</Router>

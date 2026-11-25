@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EurekaBank - Iniciar sesión</title>
+    <link rel="stylesheet" href="css/monster.css">
+    <link rel="stylesheet" href="css/eureka.css">
+    <link rel="stylesheet" href="css/web.css">
+</head>
+<body>
+<main class="login-page">
+
+    <div class="login-background" aria-hidden="true">
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+        <div class="login-slide"></div>
+    </div>
+
+    <section class="login-panel">
+        <img class="login-banner" src="monster.jpg" alt="Monster">
+
+        <div class="login-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18" /></svg>
+            <span>EurekaBank</span>
+        </div>
+
+        <div class="login-form" id="formLogin">
+            <h1>EurekaBank</h1>
+            <p>Cuentas · Movimientos · Operaciones. Ingrese sus credenciales para continuar.</p>
+
+            <label for="usuario" class="visually-hidden">Usuario</label>
+            <div class="login-input">
+                <span class="login-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+                </span>
+                <input id="usuario" autocomplete="username" placeholder="Usuario">
+            </div>
+
+            <label for="clave" class="visually-hidden">Clave</label>
+            <div class="login-input">
+                <span class="login-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4" /><path d="M11 12l9-9M16 7l3 3M14 9l2 2" /></svg>
+                </span>
+                <input id="clave" type="password" autocomplete="current-password" placeholder="Clave">
+            </div>
+
+            <details class="servidor">
+                <summary title="Servidor" aria-label="Servidor"></summary>
+                <label for="servidor">Servidor</label>
+                <input id="servidor" autocomplete="off">
+            </details>
+
+            <button id="btnIngresar" type="button" class="login-btn">Ingresar</button>
+
+            <div class="estado" id="estado" role="status" aria-live="polite"></div>
+
+            <div class="login-help">Arquitectura de Software · ESPE · GR07</div>
+        </div>
+    </section>
+
+</main>
+<script src="js/comun.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

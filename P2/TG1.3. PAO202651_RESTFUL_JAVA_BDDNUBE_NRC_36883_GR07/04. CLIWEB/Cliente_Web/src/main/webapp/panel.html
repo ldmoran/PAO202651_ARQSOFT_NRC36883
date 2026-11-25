@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EurekaBank</title>
+    <link rel="stylesheet" href="css/monster.css">
+    <link rel="stylesheet" href="css/eureka.css">
+    <link rel="stylesheet" href="css/web.css">
+</head>
+<body>
+<div class="eb-app">
+    <aside class="eb-menu">
+        <div class="eb-logo"><span class="eb-logo-icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18" /></svg></span><div><strong>EurekaBank</strong><small>Banca en línea</small></div></div>
+        <nav>
+            <button type="button" class="eb-nav activo" data-seccion="0">Cuentas</button>
+            <button type="button" class="eb-nav" data-seccion="1">Movimientos</button>
+            <button type="button" class="eb-nav" data-seccion="2">Operar</button>
+        </nav>
+        <div class="eb-pie">
+            <div class="eb-usuario" id="usuarioActual"></div>
+            <button type="button" class="eb-salir" id="btnSalir">Cerrar sesión</button>
+        </div>
+    </aside>
+
+    <section class="eb-contenido" id="contenido"></section>
+</div>
+<script src="js/comun.js"></script>
+<script src="js/panel.js"></script>
+</body>
+</html>
