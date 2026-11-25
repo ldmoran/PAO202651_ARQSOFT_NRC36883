@@ -1,0 +1,76 @@
+@model List<Pais>
+@using System.Globalization
+@{
+    string region = ViewBag.Region ?? "";
+    string nombre = ViewBag.Nombre ?? "";
+    string capital = ViewBag.Capital ?? "";
+    var regiones = new[] { "" }.Concat(ApiPaises.Controllers.PaisesController.Regiones);
+    bool filtrando = nombre != "" || capital != "" || region != "";
+}
+<section class="vista">
+  <header class="cabecera">
+    <h2>Países</h2>
+    <a class="boton boton-azul" asp-action="Crear"><svg class="ic"><use href="#i-mas"/></svg><span>Nuevo país</span></a>
+  </header>
+
+  <form class="busqueda" method="get" role="search" autocomplete="off" data-busqueda>
+    <input type="hidden" name="region" value="@region">
+    <label class="campo campo-grande">
+      <svg class="ic"><use href="#i-buscar"/></svg>
+      <input type="search" name="nombre" value="@nombre" placeholder="Buscar por nombre" aria-label="Buscar por nombre" data-foco="@(capital == "" ? "1" : null)">
+    </label>
+    <label class="campo">
+      <input type="search" name="capital" value="@capital" placeholder="Capital" aria-label="Buscar por capital">
+    </label>
+  </form>
+  <div class="regiones" role="group" aria-label="Filtrar por región">
+    @foreach (var r in regiones)
+    {
+      <a class="chip" aria-pressed="@((region == r).ToString().ToLower())" role="button" asp-action="Index" asp-route-nombre="@nombre" asp-route-capital="@capital" asp-route-region="@r">@(r == "" ? "Todas" : r)</a>
+    }
+  </div>
+
+  @if (Model.Count > 0)
+  {
+    <p class="resumen">Mostrando <b class="num">@Model.Count.ToString("N0")</b> @(Model.Count == 1 ? "país" : "países")</p>
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead>
+          <tr><th scope="col" class="c-pais">País</th><th scope="col" class="c-capital">Capital</th><th scope="col" class="c-region">Región</th>
+              <th scope="col" class="der c-poblacion">Población</th><th scope="col" class="der c-area">Área km²</th><th scope="col" class="c-moneda">Moneda</th></tr>
+        </thead>
+        <tbody>
+          @foreach (var p in Model)
+          {
+            <tr data-href="@Url.Action("Editar", new { id = p.Id })">
+              <td class="c-pais"><div class="pais">
+                @if (p.Bandera != "") { <img class="bandera" src="@p.Bandera" alt="" loading="lazy"> } else { <span class="bandera bandera-vacia"></span> }
+                <span>@p.Nombre<span class="sub">@p.Subregion</span></span></div></td>
+              <td class="c-capital">@p.Capital</td>
+              <td class="c-region">@p.Region</td>
+              <td class="der c-poblacion">@p.Poblacion.ToString("N0")</td>
+              <td class="der c-area">@p.Area.ToString("N0")</td>
+              <td class="c-moneda">@p.Moneda</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  else
+  {
+    <div class="tabla-caja"><div class="vacio">
+      @if (filtrando)
+      {
+        <h3>Sin resultados</h3>
+        <p>Ningún país coincide con esa búsqueda. Prueba con otro nombre o quita el filtro de región.</p>
+      }
+      else
+      {
+        <h3>Aún no hay países</h3>
+        <p>La base de datos está vacía. Importa los países desde la API pública y aparecerán aquí.</p>
+        <form asp-action="Importar" method="post" data-ocupado><button class="boton boton-azul" type="submit"><svg class="ic"><use href="#i-nube"/></svg><span>Importar países</span></button></form>
+      }
+    </div></div>
+  }
+</section>

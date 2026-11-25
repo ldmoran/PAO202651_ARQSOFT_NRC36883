@@ -1,0 +1,67 @@
+@model List<Universidad>
+@{
+    string nombre = ViewBag.Nombre ?? "";
+    string pais = ViewBag.Pais ?? "";
+    var paises = (List<string>)ViewBag.Paises;
+}
+<section class="vista">
+  <header class="cabecera">
+    <h2>Universidades</h2>
+    <a class="boton boton-azul" asp-action="Consultar"><svg class="ic"><use href="#i-api"/></svg><span>Traer de la API</span></a>
+  </header>
+
+  <form class="busqueda" method="get" role="search" autocomplete="off" data-busqueda>
+    <label class="campo campo-grande">
+      <svg class="ic"><use href="#i-buscar"/></svg>
+      <input type="search" name="nombre" value="@nombre" placeholder="Buscar por nombre de la universidad" aria-label="Buscar por nombre" data-foco="1">
+    </label>
+    <label class="campo">
+      <select name="pais" aria-label="Filtrar por país" onchange="this.form.submit()">
+        <option value="">Todos los países</option>
+        @foreach (var p in paises) { <option value="@p" selected="@(p == pais)">@p</option> }
+      </select>
+    </label>
+  </form>
+
+  @if (Model.Count > 0)
+  {
+    <p class="resumen">Mostrando <b class="num">@Model.Count.ToString("N0")</b> @(Model.Count == 1 ? "universidad" : "universidades")</p>
+    <div class="tabla-caja">
+      <table class="tabla">
+        <thead><tr><th scope="col">Universidad</th><th scope="col" class="c-region">País</th><th scope="col" class="c-capital">Dominio</th><th scope="col" class="c-moneda">Sitio web</th><th scope="col"><span class="solo-lector">Acciones</span></th></tr></thead>
+        <tbody>
+          @foreach (var u in Model)
+          {
+            <tr>
+              <td>@u.Nombre</td>
+              <td class="c-region">@u.Pais</td>
+              <td class="c-capital">@u.Dominio</td>
+              <td class="c-moneda">@if (u.SitioWeb != "") { <a class="enlace" href="@u.SitioWeb" target="_blank" rel="noopener noreferrer">@u.SitioWeb</a> }</td>
+              <td class="der">
+                <form method="post" asp-action="Eliminar" asp-route-id="@u.Id" asp-route-pais="@pais">
+                  <button class="icono" type="submit" aria-label="Eliminar @u.Nombre" data-confirmar-icono><svg class="ic"><use href="#i-papelera"/></svg></button>
+                </form>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  else
+  {
+    <div class="tabla-caja"><div class="vacio">
+      @if (nombre != "" || pais != "")
+      {
+        <h3>Sin resultados</h3>
+        <p>Ninguna universidad guardada coincide con esa búsqueda.</p>
+      }
+      else
+      {
+        <h3>Aún no hay universidades</h3>
+        <p>Trae las universidades de un país desde la API pública y se guardarán aquí.</p>
+        <a class="boton boton-azul" asp-action="Consultar"><span>Traer de la API</span></a>
+      }
+    </div></div>
+  }
+</section>

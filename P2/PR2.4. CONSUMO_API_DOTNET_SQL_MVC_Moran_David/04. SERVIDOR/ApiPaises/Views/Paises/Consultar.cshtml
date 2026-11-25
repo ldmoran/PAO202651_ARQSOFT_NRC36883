@@ -1,0 +1,42 @@
+@model List<Pais>?
+@{
+    string nombre = ViewBag.Nombre ?? "";
+    string? error = ViewBag.Error as string;
+}
+<section class="vista">
+  <header class="cabecera"><h2>Consultar la API</h2></header>
+  <p class="intro">Busca un país directamente en la API pública, sin pasar por la base de datos. Si te sirve, guárdalo.</p>
+  <form class="busqueda" method="get" autocomplete="off" data-ocupado>
+    <label class="campo campo-grande">
+      <svg class="ic"><use href="#i-buscar"/></svg>
+      <input type="search" name="nombre" value="@nombre" placeholder="Nombre del país, por ejemplo ecuador" aria-label="Nombre del país" autofocus>
+    </label>
+    <button class="boton boton-azul" type="submit"><span>Consultar</span></button>
+  </form>
+
+  @if (error != null)
+  {
+    <ul class="lista-api"><li><div class="dato"><b>No se pudo consultar</b><span>@error</span></div></li></ul>
+  }
+  else if (Model != null)
+  {
+    <ul class="lista-api">
+      @if (Model.Count == 0)
+      {
+        <li><div class="dato"><b>Sin resultados</b><span>La API no tiene ningún país llamado «@nombre».</span></div></li>
+      }
+      @foreach (var p in Model)
+      {
+        <li>
+          @if (p.Bandera != "") { <img class="bandera" src="@p.Bandera" alt=""> } else { <span class="bandera bandera-vacia"></span> }
+          <div class="dato"><b>@p.Nombre</b><span>@(p.Capital == "" ? "Sin capital" : p.Capital) · @p.Region · @p.Poblacion.ToString("N0") habitantes</span></div>
+          <form asp-action="GuardarDesdeApi" method="post">
+            <input type="hidden" name="nombre" value="@nombre">
+            <input type="hidden" name="codigo" value="@p.Codigo">
+            <button class="boton boton-azul" type="submit"><span>Guardar en la base</span></button>
+          </form>
+        </li>
+      }
+    </ul>
+  }
+</section>

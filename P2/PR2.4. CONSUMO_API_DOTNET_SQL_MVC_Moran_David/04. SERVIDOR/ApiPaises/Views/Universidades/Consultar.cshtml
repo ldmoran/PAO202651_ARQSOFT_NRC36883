@@ -1,0 +1,69 @@
+@model List<Universidad>?
+@{
+    string pais = ViewBag.Pais ?? "";
+    string universidad = ViewBag.Universidad ?? "";
+    string? error = ViewBag.Error as string;
+    var sugerencias = (List<string>)ViewBag.Sugerencias;
+}
+<section class="vista">
+  <header class="cabecera">
+    <h2>Buscar universidades</h2>
+    <a class="boton boton-claro" asp-action="Index"><span>Ver las guardadas</span></a>
+  </header>
+  <p class="intro">Busca en la API pública por país, por nombre de universidad o por las dos cosas. Con lo que encuentres, puedes guardarlo en tu base de datos.</p>
+
+  <form class="busqueda-doble" method="get" autocomplete="off" data-ocupado>
+    <label class="campo-etiqueta">País
+      <span class="campo">
+        <svg class="ic"><use href="#i-mundo"/></svg>
+        <input type="search" name="pais" value="@pais" list="lista-paises" placeholder="Ecuador, España, Perú…" autofocus>
+      </span>
+    </label>
+    <label class="campo-etiqueta">Universidad
+      <span class="campo">
+        <svg class="ic"><use href="#i-uni"/></svg>
+        <input type="search" name="universidad" value="@universidad" placeholder="Politécnica, Central, Católica…">
+      </span>
+    </label>
+    <button class="boton boton-azul" type="submit"><svg class="ic"><use href="#i-buscar"/></svg><span>Buscar</span></button>
+    <datalist id="lista-paises">
+      @foreach (var n in sugerencias) { <option value="@n"></option> }
+    </datalist>
+  </form>
+
+  @if (error != null)
+  {
+    <ul class="lista-api"><li><div class="dato"><b>No se pudo consultar</b><span>@error</span></div></li></ul>
+  }
+  else if (Model != null)
+  {
+    @if (Model.Count == 0)
+    {
+      <ul class="lista-api"><li><div class="dato"><b>Sin resultados</b><span>La API no encontró universidades con esos datos. Prueba con otro país o con otra parte del nombre.</span></div></li></ul>
+    }
+    else
+    {
+      var paises = Model.Select(u => u.Pais).Distinct().Count();
+      <div class="resultado-barra">
+        <p class="resumen"><b class="num">@Model.Count.ToString("N0")</b> @(Model.Count == 1 ? "universidad" : "universidades")@(paises == 1 ? " en " + Model[0].Pais : " en " + paises + " países")</p>
+        <form asp-action="Guardar" method="post" data-ocupado>
+          <input type="hidden" name="pais" value="@pais">
+          <input type="hidden" name="universidad" value="@universidad">
+          <button class="boton boton-azul" type="submit"><svg class="ic"><use href="#i-nube"/></svg><span>Guardar @(Model.Count == 1 ? "esta" : "estas " + Model.Count.ToString("N0")) en la base</span></button>
+        </form>
+      </div>
+      <div class="tabla-caja">
+        <table class="tabla">
+          <thead><tr><th scope="col">Universidad</th><th scope="col" class="c-region">País</th><th scope="col" class="c-capital">Dominio</th><th scope="col" class="c-moneda">Sitio web</th></tr></thead>
+          <tbody>
+            @foreach (var u in Model.Take(300))
+            {
+              <tr><td>@u.Nombre</td><td class="c-region">@u.Pais</td><td class="c-capital">@u.Dominio</td><td class="c-moneda">@u.SitioWeb</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (Model.Count > 300) { <p class="resumen">Se muestran las primeras 300. Al guardar se guardan todas.</p> }
+    }
+  }
+</section>

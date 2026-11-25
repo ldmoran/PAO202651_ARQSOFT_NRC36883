@@ -1,0 +1,56 @@
+@model Reporte
+@{
+    var mas = Model.MasPoblado;
+    var max = Math.Max(1, Model.PorRegion.Select(f => f.Paises).DefaultIfEmpty(1).Max());
+    string Compacto(long n) => n >= 1_000_000 ? (n / 1_000_000.0).ToString("0.0") + " M" : n.ToString("N0");
+}
+<section class="vista">
+  <header class="cabecera"><h2>Reportes</h2></header>
+  <div class="rep-principal">
+    @if (mas == null)
+    {
+      <p class="frase">Todavía no hay países para reportar.</p>
+      <p class="detalle-frase">Importa los países desde la API y vuelve aquí.</p>
+    }
+    else
+    {
+      <p class="frase">El país más poblado es <em>@mas.Nombre</em>, con @Compacto(mas.Poblacion) de habitantes.</p>
+      <p class="detalle-frase">
+        @if (mas.Bandera != "") { <img class="bandera" src="@mas.Bandera" alt=""> }
+        <span>@(mas.Capital == "" ? "Sin capital" : mas.Capital) · @mas.Region · @mas.Poblacion.ToString("N0") personas</span>
+      </p>
+      @if (Model.PorRegion.Count > 0)
+      {
+        <p class="dato-region">La región con más países es <b>@Model.PorRegion[0].Region</b>, con @Model.PorRegion[0].Paises.</p>
+      }
+    }
+  </div>
+
+  <div class="rep-bloque">
+    <h3>Países por región</h3>
+    <div class="barras">
+      @for (int i = 0; i < Model.PorRegion.Count; i++)
+      {
+        var f = Model.PorRegion[i];
+        <div class="barra" style="--i:@i"><span class="nombre">@f.Region</span>
+          <div class="pista"><div class="relleno" style="width:@((f.Paises * 100.0 / max).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+          <span class="valor">@f.Paises</span></div>
+      }
+    </div>
+  </div>
+
+  <div class="rep-bloque">
+    <h3>Promedio poblacional por región</h3>
+    <div class="tabla-caja">
+      <table class="tabla tabla-rep">
+        <thead><tr><th scope="col">Región</th><th scope="col" class="der">Países</th><th scope="col" class="der">Población total</th><th scope="col" class="der">Promedio por país</th></tr></thead>
+        <tbody>
+          @foreach (var f in Model.PorRegion)
+          {
+            <tr><td><b>@f.Region</b></td><td class="der">@f.Paises</td><td class="der">@f.PoblacionTotal.ToString("N0")</td><td class="der">@f.Promedio.ToString("N0")</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

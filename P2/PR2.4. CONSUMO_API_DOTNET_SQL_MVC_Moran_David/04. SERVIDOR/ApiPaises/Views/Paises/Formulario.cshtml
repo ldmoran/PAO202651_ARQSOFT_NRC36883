@@ -1,0 +1,48 @@
+@model Pais
+@{
+    bool nuevo = Model.Id == 0;
+    string? error = ViewBag.Error as string;
+    var regiones = ApiPaises.Controllers.PaisesController.Regiones;
+}
+<section class="vista">
+  <header class="cabecera">
+    <h2>@(nuevo ? "Nuevo país" : "Editar país")</h2>
+    <a class="boton boton-claro" asp-action="Index"><span>Volver</span></a>
+  </header>
+
+  <form class="formulario" method="post" autocomplete="off" novalidate asp-action="@(nuevo ? "Crear" : "Editar")" asp-route-id="@(nuevo ? null : Model.Id)">
+    @if (Model.Bandera != "") { <img class="bandera-grande" src="@Model.Bandera" alt="Bandera de @Model.Nombre"> }
+    <label>Nombre<input asp-for="Nombre" maxlength="120" required></label>
+    <div class="par">
+      <label>Código (3 letras)<input asp-for="Codigo" maxlength="3" class="mayus" required></label>
+      <label>Capital<input asp-for="Capital" maxlength="120"></label>
+    </div>
+    <div class="par">
+      <label>Región
+        <select asp-for="Region" required>
+          @foreach (var r in regiones) { <option value="@r" selected="@(Model.Region == r)">@r</option> }
+          @if (Model.Region != "" && !regiones.Contains(Model.Region)) { <option value="@Model.Region" selected>@Model.Region</option> }
+        </select>
+      </label>
+      <label>Subregión<input asp-for="Subregion" maxlength="80"></label>
+    </div>
+    <div class="par">
+      <label>Población<input asp-for="Poblacion" type="text" inputmode="numeric" class="num"></label>
+      <label>Área (km²)<input asp-for="Area" type="text" inputmode="decimal" class="num"></label>
+    </div>
+    <label>Moneda<input asp-for="Moneda" maxlength="120"></label>
+    <label>Bandera (dirección de la imagen)<input asp-for="Bandera" maxlength="250"></label>
+    @if (error != null) { <p class="error" role="alert">@error</p> }
+    @if (!ViewData.ModelState.IsValid && error == null) { <p class="error" role="alert">Revisa los datos: población y área deben ser números.</p> }
+    <footer>
+      <button class="boton boton-azul" type="submit"><span>Guardar</span></button>
+    </footer>
+  </form>
+
+  @if (!nuevo)
+  {
+    <form class="formulario formulario-peligro" method="post" asp-action="Eliminar" asp-route-id="@Model.Id">
+      <button class="boton boton-peligro" type="submit" data-confirmar><svg class="ic"><use href="#i-papelera"/></svg><span>Eliminar</span></button>
+    </form>
+  }
+</section>

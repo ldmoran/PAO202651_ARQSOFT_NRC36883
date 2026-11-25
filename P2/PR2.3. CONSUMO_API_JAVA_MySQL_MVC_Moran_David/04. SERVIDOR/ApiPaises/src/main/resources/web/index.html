@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas de Países</title>
+<meta name="theme-color" content="#10303f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2310303f'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23f1e3c4' stroke-width='2'/%3E%3Cpath d='M7 16h18M16 7c3 3 3 15 0 18M16 7c-3 3-3 15 0 18' fill='none' stroke='%23f1e3c4' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></symbol>
+  <symbol id="i-mundo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5Z"/></symbol>
+  <symbol id="i-barras" viewBox="0 0 24 24"><path d="M5 20V11M12 20V4M19 20v-6"/></symbol>
+  <symbol id="i-nube" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.6-7.96A5.5 5.5 0 0 1 17 8.8 4.6 4.6 0 0 1 17.5 18"/><path d="M12 11v7m-2.500-2.500L12 18l2.500-2.500"/></symbol>
+  <symbol id="i-api" viewBox="0 0 24 24"><path d="M8 7 3.500 12 8 17M16 7l4.500 5L16 17M13.500 5l-3 14"/></symbol>
+  <symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.500 4.500 4.500L19 7.500"/></symbol>
+  <symbol id="i-papelera" viewBox="0 0 24 24"><path d="M4.500 7h15M9.500 7V4.500h5V7M6.500 7l.8 12.500h9.400L17.500 7M10 11v5M14 11v5"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="panel" aria-label="Navegación">
+    <div class="marca">
+      <span class="marca-logo" aria-hidden="true"><svg class="ic"><use href="#i-mundo"/></svg></span>
+      <div>
+        <h1>Atlas de Países</h1>
+        <p>Taller de consumo de API con MVC</p>
+      </div>
+    </div>
+
+    <nav class="menu" id="menu">
+      <a href="#paises" data-vista="paises" class="activo"><svg class="ic"><use href="#i-mundo"/></svg><span>Países</span></a>
+      <a href="#api" data-vista="api"><svg class="ic"><use href="#i-api"/></svg><span>Consultar la API</span></a>
+      <a href="#reportes" data-vista="reportes"><svg class="ic"><use href="#i-barras"/></svg><span>Reportes</span></a>
+    </nav>
+
+    <div class="panel-pie">
+      <p class="estado-base"><b id="totalBase" class="num">0</b> <span id="textoTotal">países en la base de datos</span></p>
+      <button class="boton boton-crema" id="btnImportar" type="button">
+        <svg class="ic"><use href="#i-nube"/></svg><span>Importar países</span>
+      </button>
+      <p class="nota" id="notaImportar">Descarga los países de la API pública y los guarda en la base sin duplicarlos.</p>
+    </div>
+  </aside>
+
+  <main class="contenido" id="contenido">
+
+    <!-- ===================================================== PAÍSES -->
+    <section class="vista" id="vista-paises" aria-labelledby="t-paises">
+      <header class="cabecera">
+        <h2 id="t-paises">Países</h2>
+        <button class="boton boton-azul" id="btnNuevo" type="button"><svg class="ic"><use href="#i-mas"/></svg><span>Nuevo país</span></button>
+      </header>
+
+      <form class="busqueda" id="busqueda" role="search" autocomplete="off">
+        <label class="campo campo-grande">
+          <svg class="ic"><use href="#i-buscar"/></svg>
+          <input id="fNombre" type="search" placeholder="Buscar por nombre" aria-label="Buscar por nombre">
+        </label>
+        <label class="campo">
+          <input id="fCapital" type="search" placeholder="Capital" aria-label="Buscar por capital">
+        </label>
+      </form>
+      <div class="regiones" id="regiones" role="group" aria-label="Filtrar por región"></div>
+
+      <p class="resumen" id="resumen" aria-live="polite"></p>
+
+      <div class="tabla-caja">
+        <table class="tabla" id="tabla">
+          <thead>
+            <tr><th scope="col">País</th><th scope="col">Capital</th><th scope="col">Región</th>
+                <th scope="col" class="der">Población</th><th scope="col" class="der">Área km²</th><th scope="col">Moneda</th></tr>
+          </thead>
+          <tbody id="filas"></tbody>
+        </table>
+        <div class="vacio" id="vacio" hidden></div>
+      </div>
+    </section>
+
+    <!-- ===================================================== CONSULTAR API -->
+    <section class="vista" id="vista-api" aria-labelledby="t-api" hidden>
+      <header class="cabecera"><h2 id="t-api">Consultar la API</h2></header>
+      <p class="intro">Busca un país directamente en la API pública, sin pasar por la base de datos. Si te sirve, guárdalo.</p>
+      <form class="busqueda" id="formApi" autocomplete="off">
+        <label class="campo campo-grande">
+          <svg class="ic"><use href="#i-buscar"/></svg>
+          <input id="apiNombre" type="search" placeholder="Nombre del país, por ejemplo ecuador" aria-label="Nombre del país">
+        </label>
+        <button class="boton boton-azul" type="submit"><span>Consultar</span></button>
+      </form>
+      <ul class="lista-api" id="listaApi"></ul>
+    </section>
+
+    <!-- ===================================================== REPORTES -->
+    <section class="vista" id="vista-reportes" aria-labelledby="t-rep" hidden>
+      <header class="cabecera"><h2 id="t-rep">Reportes</h2></header>
+      <div class="rep-principal" id="repPrincipal"></div>
+      <div class="rep-bloque">
+        <h3>Países por región</h3>
+        <div class="barras" id="repBarras"></div>
+      </div>
+      <div class="rep-bloque">
+        <h3>Promedio poblacional por región</h3>
+        <div class="tabla-caja">
+          <table class="tabla tabla-rep">
+            <thead><tr><th scope="col">Región</th><th scope="col" class="der">Países</th><th scope="col" class="der">Población total</th><th scope="col" class="der">Promedio por país</th></tr></thead>
+            <tbody id="repTabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================== DETALLE (panel lateral, no bloquea la pantalla) -->
+  <aside class="detalle" id="detalle" aria-labelledby="t-detalle" hidden>
+    <header>
+      <h2 id="t-detalle">País</h2>
+      <button class="icono" id="btnCerrar" type="button" aria-label="Cerrar"><svg class="ic"><use href="#i-cerrar"/></svg></button>
+    </header>
+    <form id="formPais" autocomplete="off" novalidate>
+      <img class="bandera-grande" id="dBandera" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" hidden>
+      <label>Nombre<input id="dNombre" required maxlength="120"></label>
+      <div class="par">
+        <label>Código (3 letras)<input id="dCodigo" required maxlength="3" class="mayus"></label>
+        <label>Capital<input id="dCapital" maxlength="120"></label>
+      </div>
+      <div class="par">
+        <label>Región
+          <select id="dRegion" required>
+            <option>América</option><option>Europa</option><option>Asia</option><option>África</option><option>Oceanía</option><option>Antártida</option>
+          </select>
+        </label>
+        <label>Subregión<input id="dSubregion" maxlength="80"></label>
+      </div>
+      <div class="par">
+        <label>Población<input id="dPoblacion" inputmode="numeric" class="num"></label>
+        <label>Área (km²)<input id="dArea" inputmode="decimal" class="num"></label>
+      </div>
+      <label>Moneda<input id="dMoneda" maxlength="120"></label>
+      <label>Bandera (dirección de la imagen)<input id="dBanderaUrl" maxlength="250"></label>
+      <p class="error" id="dError" role="alert" hidden></p>
+      <footer>
+        <button class="boton boton-azul" type="submit" id="btnGuardar"><span>Guardar</span></button>
+        <button class="boton boton-peligro" type="button" id="btnEliminar"><svg class="ic"><use href="#i-papelera"/></svg><span>Eliminar</span></button>
+      </footer>
+    </form>
+  </aside>
+</div>
+
+<div class="avisos" id="avisos" aria-live="polite" role="status"></div>
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
